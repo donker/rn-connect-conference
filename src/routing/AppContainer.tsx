@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { NetInfo, View } from "react-native";
+import { NetInfo, View, ConnectionInfo } from "react-native";
 
 // import AppSwitchNavigator from "./AppSwitchNavigator";
 import { IRootState } from "../models/state/state";
@@ -18,7 +18,7 @@ interface IProps extends IAppContainerProps, IStateProps, IDispatchProps {}
 
 export class AppContainer extends Component<IProps> {
   componentDidMount() {
-    NetInfo.getConnectionInfo().then(connectionInfo => {
+    NetInfo.getConnectionInfo().then((connectionInfo: ConnectionInfo) => {
       this.props.setNetwork(connectionInfo.type != "none");
     });
     NetInfo.isConnected.addEventListener("connectionChange", c =>
@@ -32,7 +32,7 @@ export class AppContainer extends Component<IProps> {
   }
 }
 
-export default connect<IStateProps, IDispatchProps>(
+export default connect(
   (state: IRootState): IStateProps => {
     return {
       appState: state.app

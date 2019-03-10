@@ -12,8 +12,6 @@
   },
   "dependencies": {
     "@expo/samples": "2.1.1",
-    "@types/react-redux": "^7.0.3",
-    "@types/redux": "^3.6.0",
     "expo": "^32.0.0",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
@@ -25,6 +23,12 @@
     "tslib": "1.9.3"
   },
   "devDependencies": {
+    "@types/expo": "^32.0.6",
+    "@types/expo__vector-icons": "^9.0.1",
+    "@types/react": "^16.8.7",
+    "@types/react-native": "^0.57.38",
+    "@types/react-redux": "^7.0.3",
+    "@types/redux": "^3.6.0",
     "babel-preset-expo": "^5.0.0",
     "jest-expo": "^32.0.0",
     "react-native-typescript-transformer": "^1.2.12",
