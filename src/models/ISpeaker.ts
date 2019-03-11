@@ -1,20 +1,16 @@
 export interface ISpeaker {
-  ConferenceId: number;
+  ConferenceId?: number;
   UserId: number;
   Company: string;
   Sort?: number;
   Url: string;
   Description: string;
   DescriptionShort: string;
-  CreatedByUserID: number;
-  CreatedOnDate: Date;
-  LastModifiedByUserID: number;
-  LastModifiedOnDate: Date;
   DisplayName: string;
   FirstName: string;
   LastName: string;
-  Email: string;
-  Username: string;
+  Email?: string;
+  Username?: string;
   PhotoVisibility?: number;
   PhotoFilename: string;
   PhotoFolder: string;
@@ -22,27 +18,28 @@ export interface ISpeaker {
   PhotoHeight?: number;
   PhotoContentType: string;
   Biography: string;
-  CreatedByUser: string;
-  LastModifiedByUser: string;
+  Sessions: ISessionExtract[];
+}
+
+export interface ISessionExtract {
+  SessionId: number;
+  Title: string;
+  SubTitle: string;
 }
 
 export class Speaker implements ISpeaker {
-  ConferenceId: number;
+  ConferenceId?: number;
   UserId: number;
   Company: string;
   Sort?: number;
   Url: string;
   Description: string;
   DescriptionShort: string;
-  CreatedByUserID: number;
-  CreatedOnDate: Date;
-  LastModifiedByUserID: number;
-  LastModifiedOnDate: Date;
   DisplayName: string;
   FirstName: string;
   LastName: string;
-  Email: string;
-  Username: string;
+  Email?: string;
+  Username?: string;
   PhotoVisibility?: number;
   PhotoFilename: string;
   PhotoFolder: string;
@@ -50,19 +47,13 @@ export class Speaker implements ISpeaker {
   PhotoHeight?: number;
   PhotoContentType: string;
   Biography: string;
-  CreatedByUser: string;
-  LastModifiedByUser: string;
-    constructor() {
-  this.ConferenceId = -1;
-  this.UserId = -1;
-  this.CreatedByUserID = -1;
-  this.CreatedOnDate = new Date();
-  this.LastModifiedByUserID = -1;
-  this.LastModifiedOnDate = new Date();
-  this.DisplayName = "";
-  this.FirstName = "";
-  this.LastName = "";
-  this.Username = "";
-   }
+  Sessions: ISessionExtract[];
+  constructor() {
+    this.UserId = -1;
+    this.DisplayName = "";
+    this.FirstName = "";
+    this.LastName = "";
+    this.Username = "";
+    this.Sessions = [];
+  }
 }
-

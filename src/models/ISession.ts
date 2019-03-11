@@ -1,6 +1,8 @@
+import { ISessionSpeaker, ISessionTag, ISessionAttendee } from ".";
+
 export interface ISession {
   SessionId: number;
-  ConferenceId: number;
+  ConferenceId?: number;
   LocationId?: number;
   Level: string;
   Sort?: number;
@@ -12,12 +14,8 @@ export interface ISession {
   Status?: number;
   IsPlenary: boolean;
   DayNr: number;
-  Notes: string;
+  Notes?: string;
   TrackId?: number;
-  CreatedByUserID: number;
-  CreatedOnDate: Date;
-  LastModifiedByUserID: number;
-  LastModifiedOnDate: Date;
   TimeZoneId: string;
   SessionDateAndTime?: Date;
   SessionEnd?: Date;
@@ -29,13 +27,14 @@ export interface ISession {
   NrSpeakers?: number;
   NrVotes?: number;
   NrResources?: number;
-  CreatedByUser: string;
-  LastModifiedByUser: string;
+  SessionSpeakers: ISessionSpeaker[];
+  SessionTags: ISessionTag[];
+  Attendees?: ISessionAttendee[];
 }
 
 export class Session implements ISession {
   SessionId: number;
-  ConferenceId: number;
+  ConferenceId?: number;
   LocationId?: number;
   Level: string;
   Sort?: number;
@@ -47,12 +46,8 @@ export class Session implements ISession {
   Status?: number;
   IsPlenary: boolean;
   DayNr: number;
-  Notes: string;
+  Notes?: string;
   TrackId?: number;
-  CreatedByUserID: number;
-  CreatedOnDate: Date;
-  LastModifiedByUserID: number;
-  LastModifiedOnDate: Date;
   TimeZoneId: string;
   SessionDateAndTime?: Date;
   SessionEnd?: Date;
@@ -64,18 +59,15 @@ export class Session implements ISession {
   NrSpeakers?: number;
   NrVotes?: number;
   NrResources?: number;
-  CreatedByUser: string;
-  LastModifiedByUser: string;
-    constructor() {
-  this.SessionId = -1;
-  this.ConferenceId = -1;
-  this.SlotId = -1;
-  this.IsPlenary = false;
-  this.DayNr = -1;
-  this.CreatedByUserID = -1;
-  this.CreatedOnDate = new Date();
-  this.LastModifiedByUserID = -1;
-  this.LastModifiedOnDate = new Date();
-   }
+  SessionSpeakers: ISessionSpeaker[];
+  SessionTags: ISessionTag[];
+  Attendees?: ISessionAttendee[];
+  constructor() {
+    this.SessionId = -1;
+    this.SlotId = -1;
+    this.IsPlenary = false;
+    this.DayNr = -1;
+    this.SessionSpeakers = [];
+    this.SessionTags = [];
+  }
 }
-

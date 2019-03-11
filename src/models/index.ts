@@ -14,6 +14,7 @@ export * from './ISessionTag';
 export * from './ISessionVote';
 export * from './ISlot';
 export * from './ISpeaker';
+export * from './ISponsor';
 export * from './ITag';
 export * from './ITagVote';
 export * from './ITrack';

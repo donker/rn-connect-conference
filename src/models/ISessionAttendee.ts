@@ -1,42 +1,25 @@
 export interface ISessionAttendee {
-  SessionId: number;
-  UserId: number;
-  CreatedByUserID: number;
-  CreatedOnDate: Date;
-  LastModifiedByUserID: number;
-  LastModifiedOnDate: Date;
-  Title: string;
-  ConferenceId: number;
+  DisplayName: string;
+  SessionId?: number;
+  UserId?: number;
+  Title?: string;
+  ConferenceId?: number;
   SessionDateAndTime?: Date;
   SessionEnd?: Date;
   SessionAttendeeName: string;
-  CreatedByUser: string;
-  LastModifiedByUser: string;
 }
 
 export class SessionAttendee implements ISessionAttendee {
-  SessionId: number;
-  UserId: number;
-  CreatedByUserID: number;
-  CreatedOnDate: Date;
-  LastModifiedByUserID: number;
-  LastModifiedOnDate: Date;
-  Title: string;
-  ConferenceId: number;
+  DisplayName: string;
+  SessionId?: number;
+  UserId?: number;
+  Title?: string;
+  ConferenceId?: number;
   SessionDateAndTime?: Date;
   SessionEnd?: Date;
   SessionAttendeeName: string;
-  CreatedByUser: string;
-  LastModifiedByUser: string;
-    constructor() {
-  this.SessionId = -1;
-  this.UserId = -1;
-  this.CreatedByUserID = -1;
-  this.CreatedOnDate = new Date();
-  this.LastModifiedByUserID = -1;
-  this.LastModifiedOnDate = new Date();
-  this.ConferenceId = -1;
-  this.SessionAttendeeName = "";
-   }
+  constructor() {
+    this.DisplayName = "";
+    this.SessionAttendeeName = "";
+  }
 }
-
