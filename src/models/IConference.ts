@@ -1,8 +1,9 @@
 import { ITrack, ITag, IAttendee, ISpeaker, ISession, ISponsor } from ".";
-import { ISite, Site } from './ISite';
+import { ISite, Site } from "./ISite";
 
 export interface IConference {
   Site: ISite;
+  ShouldRefresh: boolean;
   ConferenceId: number;
   PortalId?: number;
   Name: string;
@@ -30,6 +31,7 @@ export interface IConference {
 
 export class Conference implements IConference {
   Site: ISite;
+  ShouldRefresh: boolean;
   ConferenceId: number;
   PortalId?: number;
   Name: string;
@@ -54,7 +56,8 @@ export class Conference implements IConference {
   Tags: ITag[];
   Attendees?: IAttendee[];
   constructor() {
-    this.Site=new Site();
+    this.Site = new Site();
+    this.ShouldRefresh = false;
     this.ConferenceId = -1;
     this.PortalId = -1;
     this.Name = "";

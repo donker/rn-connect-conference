@@ -41,6 +41,7 @@ export class AppContainer extends Component<IProps> {
           this.props.navigation.navigate("Scan")
         } else {
           // goto conference page
+          this.props.navigation.navigate("LoadConference")
         }
       });
     // this.props.loadSites();

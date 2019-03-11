@@ -15,48 +15,56 @@ import {
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
 import { NavigationScreenProps } from "react-navigation";
-import { IAppState, IJwtToken } from "../models";
+import { IAppState } from "../models";
 import Service from "../lib/service";
 import { setJwtToken } from "../actions/appActions";
 
-interface ILoginScreenProps {
-}
+interface ILoginScreenProps {}
 interface IStateProps {
   appState: IAppState;
 }
 interface IDispatchProps {
   setJwtToken: typeof setJwtToken;
 }
-interface IProps extends ILoginScreenProps, IStateProps, IDispatchProps, NavigationScreenProps {}
+interface IProps
+  extends ILoginScreenProps,
+    IStateProps,
+    IDispatchProps,
+    NavigationScreenProps {}
 
 interface IState {
   username: string;
   pwd: string;
+  errorString: string;
 }
 
 class LoginScreen extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      username: "",
-      pwd: ""
+      username: props.navigation.getParam("username", ""),
+      pwd: "",
+      errorString: ""
     };
+  }
+
+  componentWillReceiveProps(nextProps: IProps) {
+    if (nextProps.appState.conference.Site.Token != undefined) {
+      this.props.navigation.navigate("LoadConference");
+    }
   }
 
   tryLogin() {
     Service.authenticate(
       this.props.appState.conference.Site.Host,
       this.state.username,
-      this.state.pwd,
-      (jwt: IJwtToken) => {
-        // console.log(jwt);
-        this.props.setJwtToken(jwt);
-      },
-      () => {
-        // console.log("failed");
-      }
-    );
+      this.state.pwd
+    ).then(jwt => this.props.setJwtToken(jwt))
+    .catch((err: Error) => this.setState({
+      errorString: err.message
+    }));
   }
+
   render() {
     return (
       <Container style={{ paddingTop: Constants.statusBarHeight }}>

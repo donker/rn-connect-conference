@@ -25,3 +25,11 @@ export interface IJwtToken {
   accessToken: string;
   renewalToken: string;
 }
+
+export interface IScannedSite {
+  h: string;
+  m: number;
+  t: number;
+  u: string;
+  c: number;
+}

@@ -3,17 +3,23 @@ import { Dimensions, Text, View, StyleSheet } from "react-native";
 import { BarCodeScanner, Permissions } from "expo";
 import Icon from "react-native-vector-icons/Ionicons";
 import { IRootState } from "../models/state/state";
-import { IAppState, Conference, ISite } from "../models";
+import { IAppState, Conference, IScannedSite } from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import { connect } from "react-redux";
+import { setConference } from "../actions/appActions";
 
-interface IScanScreenProps {
-}
+interface IScanScreenProps {}
 interface IStateProps {
   appState: IAppState;
 }
-interface IDispatchProps {}
-interface IProps extends IScanScreenProps, IStateProps, IDispatchProps, NavigationScreenProps {}
+interface IDispatchProps {
+  setConference: typeof setConference;
+}
+interface IProps
+  extends IScanScreenProps,
+    IStateProps,
+    IDispatchProps,
+    NavigationScreenProps {}
 
 interface IState {
   hasCameraPermission: boolean | null;
@@ -42,10 +48,16 @@ class ScanScreen extends Component<IProps, IState> {
       // LayoutAnimation.spring();
       this.setState({ lastScannedUrl: result.data });
       try {
-        let scannedSite: ISite = JSON.parse(result.data);
+        let scannedSite: IScannedSite = JSON.parse(result.data);
         let conf = new Conference();
-        conf.Site = scannedSite;
-        this.props.navigation.navigate("Login");
+        conf.Site.Host = scannedSite.h;
+        conf.Site.ModuleId = scannedSite.m;
+        conf.Site.TabId = scannedSite.t;
+        conf.Site.Username = scannedSite.u;
+        conf.ConferenceId = scannedSite.c;
+        conf.ShouldRefresh = true;
+        this.props.setConference(conf);
+        this.props.navigation.navigate("Login", { username: scannedSite.u });
       } catch (error) {}
     }
   };

@@ -1,20 +1,15 @@
 import { Alert } from "react-native";
-import { ISite } from "../models";
-
-var renewingToken: boolean = false;
-var loggingIn: boolean = false;
+import { ISite, IJwtToken, IConference } from "../models";
 
 export default class Service {
   static authenticate(
     host: string,
     username: string,
-    password: string,
-    success: Function,
-    fail?: Function
-  ) {
+    password: string
+  ): Promise<IJwtToken> {
     var url = `https://${host}/DesktopModules/JwtAuth/API/mobile/login`;
     // console.log(url);
-    fetch(url, {
+    return fetch(url, {
       method: "POST",
       mode: "cors",
       body: JSON.stringify({ u: username, p: password }),
@@ -30,31 +25,18 @@ export default class Service {
         if (response.status == 200) {
           return response.json();
         }
-        throw "Login failed";
+        throw new Error("Login failed");
       })
       .then(jwt => {
-        success(jwt);
-      })
-      .catch(function(err) {
-        // console.log(err);
-        if (fail) {
-          fail(err);
-        }
+        return JSON.parse(jwt);
       });
   }
 
-  static renewToken(
-    updateJwt: Function,
-    site: ISite,
-    expired: Function,
-    fail?: Function
-  ) {
+  static renewToken(site: ISite): Promise<IJwtToken> {
     var url = `https://${
       site.Host
     }/DesktopModules/JwtAuth/API/mobile/extendtoken`;
-    if (renewingToken) return;
-    renewingToken = true;
-    fetch(url, {
+    return fetch(url, {
       method: "POST",
       mode: "cors",
       body: JSON.stringify({ rtoken: site.Token.renewalToken }),
@@ -67,24 +49,17 @@ export default class Service {
       }
     })
       .then(response => {
-        renewingToken = false;
         if (response.status == 200) {
           return response.json();
         } else if (response.status == 401) {
-          expired();
-          throw "Token expired";
+          throw new Error("Token expired");
         } else {
-          throw "Unexpected error";
+          throw new Error("Unexpected error");
         }
       })
       .then(jwt => {
-        updateJwt(site, jwt);
-      })
-      .catch(function(err) {
-        // console.log(err);
-        if (fail) {
-          fail(err);
-        }
+        // updateJwt(site, jwt);
+        return JSON.parse(jwt);
       });
   }
 
@@ -93,31 +68,29 @@ export default class Service {
     controller: string,
     action: string,
     id: number
-  ) {
+  ): string {
     var url = `https://${
       site.Host
-    }/API/FormaMed/Clients/${controller}/${action}`;
+    }/API/Connect/Conference/${controller}/${action}`;
     if (id) url += "/" + id.toString();
-    url += "?moduleId=649&tabId=167";
+    url += `?moduleId=${site.ModuleId}&tabId=${site.TabId}`;
     return url;
   }
-  static getQueryString(params: any) {
+
+  static getQueryString(params: any): string {
     var esc = encodeURIComponent;
     return Object.keys(params)
       .map(k => esc(k) + "=" + esc(params[k]))
       .join("&");
   }
 
-  static request(
-    updateJwt: Function,
+  static request<T>(
     site: ISite,
-    controller:string,
+    controller: string,
     action: string,
     id: number,
-    params: any,
-    success: Function,
-    fail?: Function
-  ) {
+    params: any
+  ): Promise<T> {
     var method = params.method || "GET";
     var qs = "";
     var body;
@@ -139,52 +112,39 @@ export default class Service {
 
     var url = this.getServiceUrl(site, controller, action, id) + qs;
     console.log(url);
-    fetch(url, { method, headers, body })
+    return fetch(url, { method, headers, body })
       .then(response => {
         if (response.status == 200) {
           // console.log('In one go');
           return response.json();
         } else if (response.status == 401) {
           // console.log('Unauth 1');
-          this.renewToken(updateJwt, site, () => {
-            // expired ...
-            // must log in again
-            if (!loggingIn) {
-              loggingIn = true;
-              if (fail != undefined) {
-                fail("expired");
-            }
-            }
-            throw "Must log in again";
+          return this.renewToken(site).then(jwt => {
+            site.Token = jwt;
+            return this.request<T>(site, controller, action, id, params);
           });
-          throw "Trying to renew token";
         } else {
           Alert.alert("Request failed");
-          throw "Request failed";
+          throw new Error("Request failed");
         }
       })
       .then(json => {
         // console.log(json);
-        success(json);
-      })
-      .catch(err => {
-        // console.log(err);
-        if (fail != undefined) {
-          fail(err);
-        }
+        return JSON.parse(json);
       });
   }
 
-//   static getProduct(updateJwt, site, productId, success, fail) {
-//     this.request(
-//       updateJwt,
-//       site,
-//       "Products",
-//       "ProductsContentsTree",
-//       null,
-//       { data: { productId: productId } },
-//       success,
-//       fail
-//     );
-//   }
+  static getConference(
+    site: ISite,
+    conferenceId: number
+  ): Promise<IConference> {
+    return this.request<IConference>(
+      site,
+      "Conferences",
+      "Complete",
+      conferenceId,
+      {}
+    );
+  }
+
 }
