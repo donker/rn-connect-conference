@@ -1,7 +1,11 @@
+import { IConference, Conference } from "../IConference";
+
 export interface IAppState {
   network: boolean;
+  conference: IConference;
 }
 
 export const InitialAppState: IAppState = {
-  network: false
+  network: false,
+  conference: new Conference()
 };

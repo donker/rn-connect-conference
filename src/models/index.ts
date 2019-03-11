@@ -12,6 +12,7 @@ export * from './ISessionResource';
 export * from './ISessionSpeaker';
 export * from './ISessionTag';
 export * from './ISessionVote';
+export * from './ISite';
 export * from './ISlot';
 export * from './ISpeaker';
 export * from './ISponsor';
