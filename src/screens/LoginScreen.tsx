@@ -101,6 +101,7 @@ class LoginScreen extends Component<IProps, IState> {
           >
             <Text> Login </Text>
           </Button>
+          <Text>{this.state.errorString}</Text>
         </Form>
       </Container>
     );
@@ -113,5 +114,7 @@ export default connect(
       appState: state.app
     };
   },
-  {}
+  {
+    setJwtToken
+  }
 )(LoginScreen);

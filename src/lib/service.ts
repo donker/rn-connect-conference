@@ -26,9 +26,6 @@ export default class Service {
           return response.json();
         }
         throw new Error("Login failed");
-      })
-      .then(jwt => {
-        return JSON.parse(jwt);
       });
   }
 
@@ -71,7 +68,7 @@ export default class Service {
   ): string {
     var url = `https://${
       site.Host
-    }/API/Connect/Conference/${controller}/${action}`;
+    }/DesktopModules/Connect/Conference/API/${controller}/${action}`;
     if (id) url += "/" + id.toString();
     url += `?moduleId=${site.ModuleId}&tabId=${site.TabId}`;
     return url;
@@ -127,10 +124,6 @@ export default class Service {
           Alert.alert("Request failed");
           throw new Error("Request failed");
         }
-      })
-      .then(json => {
-        // console.log(json);
-        return JSON.parse(json);
       });
   }
 

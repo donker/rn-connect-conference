@@ -27,10 +27,13 @@ interface IState {
 }
 
 class ScanScreen extends Component<IProps, IState> {
-  state = {
-    hasCameraPermission: null,
-    lastScannedUrl: null
-  };
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      hasCameraPermission: null,
+      lastScannedUrl: null
+    };
+  }
 
   componentDidMount() {
     this._requestCameraPermission();
@@ -58,7 +61,9 @@ class ScanScreen extends Component<IProps, IState> {
         conf.ShouldRefresh = true;
         this.props.setConference(conf);
         this.props.navigation.navigate("Login", { username: scannedSite.u });
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -97,7 +102,9 @@ export default connect(
       appState: state.app
     };
   },
-  {}
+  {
+    setConference
+  }
 )(ScanScreen);
 
 const { width } = Dimensions.get("window");

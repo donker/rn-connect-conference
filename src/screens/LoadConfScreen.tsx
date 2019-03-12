@@ -60,7 +60,9 @@ export default connect(
       appState: state.app
     };
   },
-  {}
+  {
+    setConference
+  }
 )(LoadConfScreen);
 
 const styles = StyleSheet.create({

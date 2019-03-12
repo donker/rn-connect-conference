@@ -36,7 +36,9 @@ export default connect(
       appState: state.app
     };
   },
-  {}
+  {
+    setConference
+  }
 )(ConferenceDetails);
 
 const styles = StyleSheet.create({
