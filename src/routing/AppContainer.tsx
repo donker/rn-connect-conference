@@ -29,22 +29,6 @@ export class AppContainer extends Component<IProps> {
     NetInfo.isConnected.addEventListener("connectionChange", c =>
       this.props.setNetwork(c)
     );
-    AsyncStorage.getItem("conference")
-      .then(value => {
-        if (value) {
-          this.props.setConference(JSON.parse(value));
-        }
-      })
-      .then(() => {
-        if (this.props.appState.conference.ConferenceId == -1) {
-          // goto scan page
-          this.props.navigation.navigate("Scan")
-        } else {
-          // goto conference page
-          this.props.navigation.navigate("LoadConference")
-        }
-      });
-    // this.props.loadSites();
   }
   render() {
     return <App />;

@@ -4,9 +4,8 @@ import { setConference } from "../actions/appActions";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
-import { View, Text } from "native-base";
-import { ActivityIndicator, StyleSheet } from "react-native";
 import Service from "../lib/service";
+import LoadScreen from './components/LoadScreen';
 
 interface ILoadConfScreenProps {}
 interface IStateProps {
@@ -46,10 +45,7 @@ class LoadConfScreen extends React.Component<IProps> {
   }
   public render() {
     return (
-      <View style={styles.container}>
-        <Text>Loading</Text>
-        <ActivityIndicator />
-      </View>
+      <LoadScreen />
     );
   }
 }
@@ -65,10 +61,4 @@ export default connect(
   }
 )(LoadConfScreen);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
+
