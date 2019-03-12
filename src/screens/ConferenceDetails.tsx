@@ -1,5 +1,9 @@
 import * as React from "react";
-import { NavigationScreenProps } from "react-navigation";
+import {
+  NavigationScreenProps,
+  Header,
+  createStackNavigator
+} from "react-navigation";
 import { setConference, refreshConference } from "../actions/appActions";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
@@ -9,6 +13,7 @@ import { StyleSheet, ScrollView, SafeAreaView, Dimensions } from "react-native";
 import Moment from "moment";
 import { Image } from "react-native-expo-image-cache";
 import PropValue from "./components/PropValue";
+import Icon from "react-native-vector-icons/Ionicons";
 
 interface IConferenceDetailsProps {}
 interface IStateProps {
@@ -24,7 +29,11 @@ interface IProps
     IDispatchProps,
     NavigationScreenProps {}
 
-class ConferenceDetails extends React.Component<IProps> {
+class ConferenceDetailsComponent extends React.Component<IProps> {
+  static navigationOptions = () => ({
+    header: headerProps => <Header {...headerProps} />
+  });
+
   private refreshConference() {
     if (this.props.appState.network) {
       this.props.refreshConference();
@@ -85,7 +94,7 @@ class ConferenceDetails extends React.Component<IProps> {
   }
 }
 
-export default connect(
+const ConferenceDetailsScreen = connect(
   (state: IRootState): IStateProps => {
     return {
       appState: state.app
@@ -95,7 +104,28 @@ export default connect(
     setConference,
     refreshConference
   }
-)(ConferenceDetails);
+)(ConferenceDetailsComponent);
+
+const ConferenceDetails = createStackNavigator({
+  Conference: {
+    screen: ConferenceDetailsScreen,
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTitle: "Overview",
+        headerLeft: (
+          <Icon
+            style={{ paddingLeft: 10 }}
+            onPress={() => navigation.openDrawer()}
+            name="md-menu"
+            size={30}
+          />
+        )
+      };
+    }
+  }
+});
+
+export default ConferenceDetails;
 
 const styles = StyleSheet.create({
   container: {},
