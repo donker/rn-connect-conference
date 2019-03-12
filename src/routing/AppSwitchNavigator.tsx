@@ -1,12 +1,12 @@
 import { createSwitchNavigator } from "react-navigation";
 import ScanStack from "./ScanStack";
 import LoadConfScreen from "../screens/LoadConfScreen";
-import ConferenceDetails from "../screens/ConferenceDetails";
+import Conference from './Conference';
 
 const AppSwitchNavigator = createSwitchNavigator({
   Scan: { screen: ScanStack },
   LoadConference: { screen: LoadConfScreen },
-  Conference: { screen: ConferenceDetails }
+  Conference: { screen: Conference }
 });
 
 export default AppSwitchNavigator;

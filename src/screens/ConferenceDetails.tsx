@@ -4,8 +4,11 @@ import { setConference } from "../actions/appActions";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
-import { View, Text } from "native-base";
-import { StyleSheet } from "react-native";
+import { View, Text, Card, CardItem, Body } from "native-base";
+import { StyleSheet, ScrollView, SafeAreaView, Dimensions } from "react-native";
+import Moment from "moment";
+import { Image } from "react-native-expo-image-cache";
+import PropValue from "./components/PropValue";
 
 interface IConferenceDetailsProps {}
 interface IStateProps {
@@ -22,10 +25,36 @@ interface IProps
 
 class ConferenceDetails extends React.Component<IProps> {
   public render() {
+    var conf = this.props.appState.conference;
+    var imgUri = `https://${
+      conf.Site.Host
+    }/DesktopModules/Connect/Conference/API/Conference/${
+      conf.ConferenceId
+    }/Conferences/Image?size=600`;
+    Moment.locale("en");
+    var dateString = `From ${Moment(conf.StartDate).format(
+      "D MMM"
+    )} to ${Moment(conf.EndDate).format("D MMM YYYY")}`;
     return (
-      <View style={styles.container}>
-        <Text>{this.props.appState.conference.Name}</Text>
-      </View>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+        <ScrollView style={styles.container}>
+          <View>
+            <Image uri={imgUri} style={styles.mainImg} resizeMode="cover" />
+          </View>
+          <Card>
+            <CardItem header>
+              <Text>{conf.Name}</Text>
+            </CardItem>
+            <CardItem>
+              <Body>
+                <PropValue prop="Location" value={conf.Location} />
+                <PropValue prop="Description" value={conf.Description} />
+                <PropValue prop="Dates" value={dateString} />
+              </Body>
+            </CardItem>
+          </Card>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
@@ -43,8 +72,16 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
+  },
+  mainImg: {
+    height: Dimensions.get("window").width / 2.5,
+  },
+  titleBox: {
+    height: 40,
+    padding: 10,
+    backgroundColor: "#FFFFFF",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center"
   }
 });
