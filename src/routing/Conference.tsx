@@ -1,5 +1,7 @@
+import React from "react";
 import { createDrawerNavigator } from "react-navigation";
 import ConferenceDetails from "../screens/ConferenceDetails";
+import SideBar from '../screens/components/SideBar';
 
 const Conference = createDrawerNavigator({
   details: {
@@ -10,6 +12,9 @@ const Conference = createDrawerNavigator({
       };
     }
   }
+},
+{
+  contentComponent: (props: any) => <SideBar {...props} />
 });
 
 export default Conference;
