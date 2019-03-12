@@ -1,10 +1,10 @@
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
-import { setConference } from "../actions/appActions";
+import { setConference, refreshConference } from "../actions/appActions";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
-import { View, Text, Card, CardItem, Body } from "native-base";
+import { View, Text, Card, CardItem, Body, Button } from "native-base";
 import { StyleSheet, ScrollView, SafeAreaView, Dimensions } from "react-native";
 import Moment from "moment";
 import { Image } from "react-native-expo-image-cache";
@@ -16,6 +16,7 @@ interface IStateProps {
 }
 interface IDispatchProps {
   setConference: typeof setConference;
+  refreshConference: typeof refreshConference;
 }
 interface IProps
   extends IConferenceDetailsProps,
@@ -24,6 +25,13 @@ interface IProps
     NavigationScreenProps {}
 
 class ConferenceDetails extends React.Component<IProps> {
+  private refreshConference() {
+    if (this.props.appState.network) {
+      this.props.refreshConference();
+      this.props.navigation.navigate("LoadConference");
+    }
+  }
+
   public render() {
     var conf = this.props.appState.conference;
     var imgUri = `https://${
@@ -53,6 +61,24 @@ class ConferenceDetails extends React.Component<IProps> {
               </Body>
             </CardItem>
           </Card>
+          <View style={styles.buttonContainer}>
+            <View style={styles.button}>
+              <Button
+                bordered
+                block
+                info
+                onPress={() => this.refreshConference()}
+                disabled={!this.props.appState.network}
+              >
+                <Text>Refresh</Text>
+              </Button>
+            </View>
+            <View style={styles.button}>
+              <Button bordered block danger>
+                <Text>Forget</Text>
+              </Button>
+            </View>
+          </View>
         </ScrollView>
       </SafeAreaView>
     );
@@ -66,15 +92,15 @@ export default connect(
     };
   },
   {
-    setConference
+    setConference,
+    refreshConference
   }
 )(ConferenceDetails);
 
 const styles = StyleSheet.create({
-  container: {
-  },
+  container: {},
   mainImg: {
-    height: Dimensions.get("window").width / 2.5,
+    height: Dimensions.get("window").width / 2.5
   },
   titleBox: {
     height: 40,
@@ -83,5 +109,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  button: {
+    padding: 10,
+    flex: 1
   }
 });

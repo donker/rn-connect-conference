@@ -22,3 +22,9 @@ export function setJwtToken(jwt: IJwtToken) {
     dispatch(setConference(conf));
   };
 }
+
+export function refreshConference() {
+  return {
+    type: ActionType.REFRESH_CONFERENCE
+  };
+}

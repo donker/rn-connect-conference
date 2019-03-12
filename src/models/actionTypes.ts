@@ -5,5 +5,6 @@ export interface IAction {
 
 export enum ActionType {
   SET_NETWORK,
-  SET_CONFERENCE
+  SET_CONFERENCE,
+  REFRESH_CONFERENCE
 }
