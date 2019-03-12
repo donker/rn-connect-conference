@@ -12,6 +12,7 @@ import {
   Label,
   Title
 } from "native-base";
+import { bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
 import { NavigationScreenProps } from "react-navigation";
@@ -59,10 +60,13 @@ class LoginScreen extends Component<IProps, IState> {
       this.props.appState.conference.Site.Host,
       this.state.username,
       this.state.pwd
-    ).then(jwt => this.props.setJwtToken(jwt))
-    .catch((err: Error) => this.setState({
-      errorString: err.message
-    }));
+    )
+      .then(jwt => this.props.setJwtToken(jwt))
+      .catch((err: Error) =>
+        this.setState({
+          errorString: err.message
+        })
+      );
   }
 
   render() {
@@ -114,7 +118,11 @@ export default connect(
       appState: state.app
     };
   },
-  {
-    setJwtToken
-  }
+  (dispatch: Dispatch) =>
+    bindActionCreators(
+      {
+        setJwtToken: setJwtToken
+      },
+      dispatch
+    )
 )(LoginScreen);
