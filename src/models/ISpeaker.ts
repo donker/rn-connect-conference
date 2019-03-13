@@ -11,13 +11,8 @@ export interface ISpeaker {
   LastName: string;
   Email?: string;
   Username?: string;
-  PhotoVisibility?: number;
-  PhotoFilename: string;
-  PhotoFolder: string;
-  PhotoWidth?: number;
-  PhotoHeight?: number;
-  PhotoContentType: string;
   Biography: string;
+  NrSessions: number;
   Sessions: ISessionExtract[];
 }
 
@@ -40,13 +35,8 @@ export class Speaker implements ISpeaker {
   LastName: string;
   Email?: string;
   Username?: string;
-  PhotoVisibility?: number;
-  PhotoFilename: string;
-  PhotoFolder: string;
-  PhotoWidth?: number;
-  PhotoHeight?: number;
-  PhotoContentType: string;
   Biography: string;
+  NrSessions: number;
   Sessions: ISessionExtract[];
   constructor() {
     this.UserId = -1;
@@ -54,6 +44,7 @@ export class Speaker implements ISpeaker {
     this.FirstName = "";
     this.LastName = "";
     this.Username = "";
+    this.NrSessions = 0;
     this.Sessions = [];
   }
 }

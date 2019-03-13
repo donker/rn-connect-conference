@@ -3,6 +3,7 @@ import { createDrawerNavigator } from "react-navigation";
 import ConferenceDetails from "../screens/ConferenceDetails";
 import SideBar from '../screens/components/SideBar';
 import Sponsors from '../screens/Sponsors';
+import SpeakersStack from './SpeakersStack';
 
 const Conference = createDrawerNavigator({
   details: {
@@ -18,6 +19,14 @@ const Conference = createDrawerNavigator({
     navigationOptions: () => {
       return {
         title: "Sponsors"
+      };
+    }
+  },
+  speakers: {
+    screen: SpeakersStack,
+    navigationOptions: () => {
+      return {
+        title: "Speakers"
       };
     }
   },
