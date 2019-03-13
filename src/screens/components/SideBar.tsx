@@ -47,6 +47,12 @@ export default class SideBar extends React.Component<
               >
                 <Text>Overview</Text>
               </ListItem>
+              <ListItem
+                button
+                onPress={() => this.props.navigation.navigate("sponsors")}
+              >
+                <Text>Sponsors</Text>
+              </ListItem>
             </List>
           </Content>
         </Container>

@@ -14,6 +14,7 @@ import Moment from "moment";
 import { Image } from "react-native-expo-image-cache";
 import PropValue from "./components/PropValue";
 import Icon from "react-native-vector-icons/Ionicons";
+import SponsorListPropValue from "./components/SponsorListPropValue";
 
 interface IConferenceDetailsProps {}
 interface IStateProps {
@@ -67,6 +68,20 @@ class ConferenceDetailsComponent extends React.Component<IProps> {
                 <PropValue prop="Location" value={conf.Location} />
                 <PropValue prop="Description" value={conf.Description} />
                 <PropValue prop="Dates" value={dateString} />
+              </Body>
+            </CardItem>
+          </Card>
+          <Card>
+            <CardItem
+              header
+              button
+              onPress={() => this.props.navigation.navigate("sponsors")}
+            >
+              <Text>Sponsors</Text>
+            </CardItem>
+            <CardItem>
+              <Body>
+                <SponsorListPropValue sponsors={conf.Sponsors} />
               </Body>
             </CardItem>
           </Card>
