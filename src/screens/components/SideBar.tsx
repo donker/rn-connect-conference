@@ -32,23 +32,13 @@ export default class SideBar extends React.Component<
         <Container>
           <Content>
             <Image
-              source={require("../../../assets/images/screen_curved.png")}
+              source={require("../../../assets/images/drawer-cover.png")}
               style={{
                 height: this.state.width / 2,
                 width: "100%",
                 alignSelf: "stretch",
                 position: "absolute"
               }}
-            />
-            <Image
-              style={{
-                height: 80,
-                width: 70,
-                position: "absolute",
-                alignSelf: "center",
-                top: 20
-              }}
-              source={require("../../../assets/images/logo.png")}
             />
             <List style={{ marginTop: this.state.width / 2 }}>
               <ListItem
