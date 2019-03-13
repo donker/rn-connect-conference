@@ -4,6 +4,7 @@ import ConferenceDetails from "../screens/ConferenceDetails";
 import SideBar from '../screens/components/SideBar';
 import Sponsors from '../screens/Sponsors';
 import SpeakersStack from './SpeakersStack';
+import SessionsStack from './SessionsStack';
 
 const Conference = createDrawerNavigator({
   details: {
@@ -27,6 +28,14 @@ const Conference = createDrawerNavigator({
     navigationOptions: () => {
       return {
         title: "Speakers"
+      };
+    }
+  },
+  sessions: {
+    screen: SessionsStack,
+    navigationOptions: () => {
+      return {
+        title: "Sessions"
       };
     }
   },

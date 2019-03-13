@@ -30,6 +30,8 @@ export interface ISession {
   SessionSpeakers: ISessionSpeaker[];
   SessionTags: ISessionTag[];
   Attendees?: ISessionAttendee[];
+  Speakers: { Key: number; Value: string }[];
+  Tags: { Key: number; Value: string }[];
 }
 
 export class Session implements ISession {
@@ -62,6 +64,8 @@ export class Session implements ISession {
   SessionSpeakers: ISessionSpeaker[];
   SessionTags: ISessionTag[];
   Attendees?: ISessionAttendee[];
+  Speakers: { Key: number; Value: string }[];
+  Tags: { Key: number; Value: string }[];
   constructor() {
     this.SessionId = -1;
     this.SlotId = -1;
@@ -69,5 +73,7 @@ export class Session implements ISession {
     this.DayNr = -1;
     this.SessionSpeakers = [];
     this.SessionTags = [];
+    this.Speakers = [];
+    this.Tags = [];
   }
 }
