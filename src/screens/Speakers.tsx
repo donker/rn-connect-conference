@@ -14,7 +14,8 @@ import {
   Body,
   Text,
   Right,
-  Button
+  Button,
+  Icon
 } from "native-base";
 import { Image } from "react-native-expo-image-cache";
 
@@ -36,7 +37,16 @@ class Speakers extends React.Component<IProps> {
   public render() {
     var conf = this.props.appState.conference;
     var speakers = conf.Speakers.map(s => (
-      <ListItem key={s.UserId} thumbnail>
+      <ListItem
+        key={s.UserId}
+        thumbnail
+        onPress={() =>
+          this.props.navigation.navigate("speaker", {
+            host: conf.Site.Host,
+            person: s
+          })
+        }
+      >
         <Left>
           <Image
             uri={`https://${
@@ -55,17 +65,7 @@ class Speakers extends React.Component<IProps> {
           </Text>
         </Body>
         <Right>
-          <Button
-            transparent
-            onPress={() =>
-              this.props.navigation.navigate("speaker", {
-                host: conf.Site.Host,
-                person: s
-              })
-            }
-          >
-            <Text>View</Text>
-          </Button>
+          <Icon name="arrow-forward" />
         </Right>
       </ListItem>
     ));

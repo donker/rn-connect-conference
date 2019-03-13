@@ -19,4 +19,5 @@ export * from './ISponsor';
 export * from './ITag';
 export * from './ITagVote';
 export * from './ITrack';
+export * from './IUserExtract';
 
