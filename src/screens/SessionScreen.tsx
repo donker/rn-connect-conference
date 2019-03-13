@@ -11,32 +11,33 @@ import Moment from "moment";
 const SessionScreen = (props: NavigationScreenProps) => {
   let host = props.navigation.getParam("host", "");
   let session: ISession = props.navigation.getParam("session", new Session());
-  let speakers = session.Speakers.map(ss => (
+  let speakers = session.SessionSpeakers.map(ss => (
     <ListItem
       thumbnail
-      key={ss.Key}
+      key={ss.UserId}
       style={{ marginTop: 20, marginBottom: 20 }}
     >
       <Left>
         <Image
           uri={`https://${host}/DnnImageHandler.ashx?mode=profilepic&w=40&h=40&userId=${
-            ss.Key
+            ss.UserId
           }`}
           style={{ height: 40, width: 40 }}
           resizeMode="contain"
         />
       </Left>
       <Body>
-        <Text>{ss.Value}</Text>
+        <Text>{ss.DisplayName}</Text>
+        <Text note>{ss.Company}</Text>
       </Body>
     </ListItem>
   ));
-  let tags = session.Tags.map(t => (
-    <Button rounded small info key={t.Key} style={{ margin: 5 }}>
-      <Text>{t.Value}</Text>
+  let tags = session.SessionTags.map(t => (
+    <Button rounded small info key={t.TagId} style={{ margin: 5 }}>
+      <Text>{t.TagName}</Text>
     </Button>
   ));
-  let whereAndWhen = session.SessionDateAndTime ? (
+  let whereAndWhen = session.IsScheduled ? (
     <PropValue
       prop="Where and when"
       value={`${session.LocationName} on ${Moment(

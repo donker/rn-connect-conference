@@ -10,13 +10,11 @@ import {
   Content,
   List,
   ListItem,
-  Left,
   Body,
   Text,
   Right,
-  Button
+  Icon
 } from "native-base";
-import { Image } from "react-native-expo-image-cache";
 
 interface ISessionsProps {}
 interface IStateProps {
@@ -34,30 +32,31 @@ interface IProps
 
 class Sessions extends React.Component<IProps> {
   public render() {
-    var conf = this.props.appState.conference;
-    var sessions = conf.Sessions.map(s => (
-      <ListItem key={s.SessionId}>
-        <Body>
-          <Text>{s.Title}</Text>
-          <Text note numberOfLines={1}>
-            {s.SubTitle}
-          </Text>
-        </Body>
-        <Right>
-          <Button
-            transparent
-            onPress={() =>
-              this.props.navigation.navigate("session", {
-                host: conf.Site.Host,
-                session: s
-              })
-            }
-          >
-            <Text>View</Text>
-          </Button>
-        </Right>
-      </ListItem>
-    ));
+    let conf = this.props.appState.conference;
+    let sessions = conf.Sessions.map(s => {
+      let speakers = s.SessionSpeakers.map(s => s.DisplayName).join(", ");
+      return (
+        <ListItem
+          key={s.SessionId}
+          onPress={() =>
+            this.props.navigation.navigate("session", {
+              host: conf.Site.Host,
+              session: s
+            })
+          }
+        >
+          <Body>
+            <Text>{s.Title}</Text>
+            <Text note numberOfLines={1}>
+              {speakers}
+            </Text>
+          </Body>
+          <Right>
+            <Icon name="arrow-forward" />
+          </Right>
+        </ListItem>
+      );
+    });
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
         <ScrollView style={styles.container}>

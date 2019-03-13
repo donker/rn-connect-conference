@@ -1,4 +1,5 @@
-import { ISessionSpeaker, ISessionTag, ISessionAttendee } from ".";
+import { ISessionTag } from ".";
+import { IUserExtract } from "./IUserExtract";
 
 export interface ISession {
   SessionId: number;
@@ -27,9 +28,10 @@ export interface ISession {
   NrSpeakers?: number;
   NrVotes?: number;
   NrResources?: number;
-  SessionSpeakers: ISessionSpeaker[];
+  IsScheduled: boolean;
+  SessionSpeakers: IUserExtract[];
   SessionTags: ISessionTag[];
-  Attendees?: ISessionAttendee[];
+  Attendees?: IUserExtract[];
   Speakers: { Key: number; Value: string }[];
   Tags: { Key: number; Value: string }[];
 }
@@ -61,9 +63,10 @@ export class Session implements ISession {
   NrSpeakers?: number;
   NrVotes?: number;
   NrResources?: number;
-  SessionSpeakers: ISessionSpeaker[];
+  IsScheduled: boolean;
+  SessionSpeakers: IUserExtract[];
   SessionTags: ISessionTag[];
-  Attendees?: ISessionAttendee[];
+  Attendees?: IUserExtract[];
   Speakers: { Key: number; Value: string }[];
   Tags: { Key: number; Value: string }[];
   constructor() {
