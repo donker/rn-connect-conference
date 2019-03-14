@@ -48,8 +48,11 @@ const SessionScreen = (props: NavigationScreenProps) => {
     />
   ) : null;
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentInsetAdjustmentBehavior="automatic"
+    >
+      <SafeAreaView>
         <Text style={styles.title}>{session.Title}</Text>
         <Text style={styles.subtitle}>{session.SubTitle}</Text>
         <List>{speakers}</List>
@@ -63,8 +66,8 @@ const SessionScreen = (props: NavigationScreenProps) => {
         {whereAndWhen}
         <PropValue prop="Level" value={session.Level} />
         <PropValue prop="Abstract" value={session.Description} />
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
@@ -72,6 +75,8 @@ export default SessionScreen;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: "#fff",
     padding: 10
   },
   title: {

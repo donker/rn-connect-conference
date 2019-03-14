@@ -54,8 +54,11 @@ class ConferenceDetailsComponent extends React.Component<IProps> {
       "D MMM"
     )} to ${Moment(conf.EndDate).format("D MMM YYYY")}`;
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-        <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentInsetAdjustmentBehavior="automatic"
+      >
+        <SafeAreaView>
           <View>
             <Image uri={imgUri} style={styles.mainImg} resizeMode="cover" />
           </View>
@@ -103,8 +106,8 @@ class ConferenceDetailsComponent extends React.Component<IProps> {
               </Button>
             </View>
           </View>
-        </ScrollView>
-      </SafeAreaView>
+        </SafeAreaView>
+      </ScrollView>
     );
   }
 }
@@ -143,7 +146,10 @@ const ConferenceDetails = createStackNavigator({
 export default ConferenceDetails;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff"
+  },
   mainImg: {
     height: Dimensions.get("window").width / 2.5
   },

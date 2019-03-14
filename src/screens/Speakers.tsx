@@ -70,15 +70,14 @@ class Speakers extends React.Component<IProps> {
       </ListItem>
     ));
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-        <ScrollView style={styles.container}>
-          <Container>
-            <Content>
-              <List>{speakers}</List>
-            </Content>
-          </Container>
-        </ScrollView>
-      </SafeAreaView>
+      <ScrollView
+        style={styles.container}
+        contentInsetAdjustmentBehavior="automatic"
+      >
+        <SafeAreaView>
+          <List>{speakers}</List>
+        </SafeAreaView>
+      </ScrollView>
     );
   }
 }
@@ -93,7 +92,10 @@ export default connect(
 )(Speakers);
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff"
+  },
   mainImg: {
     height: Dimensions.get("window").width / 2.5
   },

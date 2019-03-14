@@ -5,16 +5,7 @@ import { IAppState } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
 import { StyleSheet, ScrollView, SafeAreaView, Dimensions } from "react-native";
-import {
-  Container,
-  Content,
-  List,
-  ListItem,
-  Body,
-  Text,
-  Right,
-  Icon
-} from "native-base";
+import { List, ListItem, Body, Text, Right, Icon } from "native-base";
 
 interface ISessionsProps {}
 interface IStateProps {
@@ -58,15 +49,14 @@ class Sessions extends React.Component<IProps> {
       );
     });
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-        <ScrollView style={styles.container}>
-          <Container>
-            <Content>
-              <List>{sessions}</List>
-            </Content>
-          </Container>
-        </ScrollView>
-      </SafeAreaView>
+      <ScrollView
+        style={styles.container}
+        contentInsetAdjustmentBehavior="automatic"
+      >
+        <SafeAreaView>
+          <List>{sessions}</List>
+        </SafeAreaView>
+      </ScrollView>
     );
   }
 }
@@ -81,7 +71,10 @@ export default connect(
 )(Sessions);
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff"
+  },
   mainImg: {
     height: Dimensions.get("window").width / 2.5
   },

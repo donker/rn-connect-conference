@@ -30,13 +30,12 @@ class SponsorsComponent extends React.Component<IProps> {
       />
     ));
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-        <ScrollView style={styles.container}>
-          <Container>
-            <Content>{sponsors}</Content>
-          </Container>
-        </ScrollView>
-      </SafeAreaView>
+      <ScrollView
+        style={styles.container}
+        contentInsetAdjustmentBehavior="automatic"
+      >
+        <SafeAreaView>{sponsors}</SafeAreaView>
+      </ScrollView>
     );
   }
 }
@@ -72,5 +71,8 @@ const Sponsors = createStackNavigator({
 export default Sponsors;
 
 const styles = StyleSheet.create({
-  container: {}
+  container: {
+    flex: 1,
+    backgroundColor: "#fff"
+  }
 });

@@ -25,8 +25,11 @@ const PersonScreen = (props: NavigationScreenProps) => {
           </ListItem>
         ));
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentInsetAdjustmentBehavior="automatic"
+    >
+      <SafeAreaView>
         <View>
           <Image
             uri={`https://${host}/DnnImageHandler.ashx?mode=profilepic&w=${screenWidth}&h=${screenWidth}&userId=${
@@ -55,15 +58,18 @@ const PersonScreen = (props: NavigationScreenProps) => {
           <Text style={styles.sectionTitle}>Sessions</Text>
         </View>
         <List>{sessions}</List>
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
 export default PersonScreen;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff"
+  },
   mainImg: {
     height: Dimensions.get("window").width / 2.5
   },
