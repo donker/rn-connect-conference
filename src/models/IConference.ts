@@ -1,8 +1,13 @@
 import { ITrack, ITag, IAttendee, ISpeaker, ISession, ISponsor } from ".";
 import { ISite, Site } from "./ISite";
+import { ISecurity } from './ISecurity';
 
 export interface IConference {
   Site: ISite;
+  Security: ISecurity;
+  IsAttending: boolean;
+  Closed: boolean;
+  OnGoing: boolean;
   ShouldRefresh: boolean;
   ConferenceId: number;
   PortalId?: number;
@@ -31,6 +36,10 @@ export interface IConference {
 
 export class Conference implements IConference {
   Site: ISite;
+  Security: ISecurity;
+  IsAttending: boolean;
+  Closed: boolean;
+  OnGoing: boolean;
   ShouldRefresh: boolean;
   ConferenceId: number;
   PortalId?: number;

@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-  NavigationScreenProps,
-  Header,
-  createStackNavigator
-} from "react-navigation";
+import { NavigationScreenProps, Header } from "react-navigation";
 import { setConference, refreshConference } from "../actions/appActions";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
@@ -13,7 +9,6 @@ import { StyleSheet, ScrollView, SafeAreaView, Dimensions } from "react-native";
 import Moment from "moment";
 import { Image } from "react-native-expo-image-cache";
 import PropValue from "./components/PropValue";
-import Icon from "react-native-vector-icons/Ionicons";
 import SponsorListPropValue from "./components/SponsorListPropValue";
 
 interface IConferenceDetailsProps {}
@@ -30,7 +25,7 @@ interface IProps
     IDispatchProps,
     NavigationScreenProps {}
 
-class ConferenceDetailsComponent extends React.Component<IProps> {
+class ConferenceDetails extends React.Component<IProps> {
   static navigationOptions = () => ({
     header: headerProps => <Header {...headerProps} />
   });
@@ -94,6 +89,17 @@ class ConferenceDetailsComponent extends React.Component<IProps> {
                 bordered
                 block
                 info
+                onPress={() => this.props.navigation.navigate("scanSession")}
+                disabled={!this.props.appState.network}
+              >
+                <Text>Review Session</Text>
+              </Button>
+            </View>
+            <View style={styles.button}>
+              <Button
+                bordered
+                block
+                info
                 onPress={() => this.refreshConference()}
                 disabled={!this.props.appState.network}
               >
@@ -112,7 +118,7 @@ class ConferenceDetailsComponent extends React.Component<IProps> {
   }
 }
 
-const ConferenceDetailsScreen = connect(
+export default connect(
   (state: IRootState): IStateProps => {
     return {
       appState: state.app
@@ -122,28 +128,7 @@ const ConferenceDetailsScreen = connect(
     setConference,
     refreshConference
   }
-)(ConferenceDetailsComponent);
-
-const ConferenceDetails = createStackNavigator({
-  Conference: {
-    screen: ConferenceDetailsScreen,
-    navigationOptions: ({ navigation }) => {
-      return {
-        headerTitle: "Overview",
-        headerLeft: (
-          <Icon
-            style={{ paddingLeft: 10 }}
-            onPress={() => navigation.openDrawer()}
-            name="md-menu"
-            size={30}
-          />
-        )
-      };
-    }
-  }
-});
-
-export default ConferenceDetails;
+)(ConferenceDetails);
 
 const styles = StyleSheet.create({
   container: {

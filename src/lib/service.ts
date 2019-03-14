@@ -1,5 +1,11 @@
 import { Alert } from "react-native";
-import { ISite, IJwtToken, IConference } from "../models";
+import {
+  ISite,
+  IJwtToken,
+  IConference,
+  ISessionAttendee,
+  ISessionEvaluation
+} from "../models";
 
 export default class Service {
   static authenticate(
@@ -19,14 +25,13 @@ export default class Service {
         Accept: "application/json; charset=utf-8",
         "Cache-Control": "no-cache"
       }
-    })
-      .then(response => {
-        // console.log(response);
-        if (response.status == 200) {
-          return response.json();
-        }
-        throw new Error("Login failed");
-      });
+    }).then(response => {
+      // console.log(response);
+      if (response.status == 200) {
+        return response.json();
+      }
+      throw new Error("Login failed");
+    });
   }
 
   static renewToken(site: ISite): Promise<IJwtToken> {
@@ -42,7 +47,7 @@ export default class Service {
         "Content-Type": "application/json; charset=utf-8",
         Accept: "application/json; charset=utf-8",
         "Cache-Control": "no-cache",
-        Authorization: "Bearer " + site.Token
+        Authorization: "Bearer " + site.Token.accessToken
       }
     })
       .then(response => {
@@ -64,12 +69,18 @@ export default class Service {
     site: ISite,
     controller: string,
     action: string,
-    id: number
+    conferenceId: number | null,
+    id: number | null
   ): string {
-    var url = `https://${
-      site.Host
-    }/DesktopModules/Connect/Conference/API/${controller}/${action}`;
-    if (id) url += "/" + id.toString();
+    var url =
+      conferenceId == null
+        ? `https://${
+            site.Host
+          }/DesktopModules/Connect/Conference/API/${controller}/${action}`
+        : `https://${
+            site.Host
+          }/DesktopModules/Connect/Conference/API/Conference/${conferenceId}/${controller}/${action}`;
+    if (id != null) url += "/" + id.toString();
     url += `?moduleId=${site.ModuleId}&tabId=${site.TabId}`;
     return url;
   }
@@ -85,7 +96,9 @@ export default class Service {
     site: ISite,
     controller: string,
     action: string,
-    id: number,
+    conferenceId: number | null,
+    id: number | null,
+    qsParams: any,
     params: any
   ): Promise<T> {
     var method = params.method || "GET";
@@ -94,7 +107,7 @@ export default class Service {
     var headers = {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: "Bearer " + site.Token
+      Authorization: "Bearer " + site.Token.accessToken
     };
     if (params.headers) {
       headers = Object.assign({}, headers, params.headers);
@@ -107,24 +120,37 @@ export default class Service {
       else body = JSON.stringify(params.data);
     }
 
-    var url = this.getServiceUrl(site, controller, action, id) + qs;
-    console.log(url);
-    return fetch(url, { method, headers, body })
-      .then(response => {
-        if (response.status == 200) {
-          // console.log('In one go');
-          return response.json();
-        } else if (response.status == 401) {
-          // console.log('Unauth 1');
-          return this.renewToken(site).then(jwt => {
-            site.Token = jwt;
-            return this.request<T>(site, controller, action, id, params);
-          });
-        } else {
-          Alert.alert("Request failed");
-          throw new Error("Request failed");
-        }
-      });
+    if (qsParams) {
+      qs = "&" + this.getQueryString(qsParams);
+    }
+
+    var url =
+      this.getServiceUrl(site, controller, action, conferenceId, id) + qs;
+    console.log(url, { method, headers, body });
+    return fetch(url, { method, headers, body }).then(response => {
+      if (response.status == 200) {
+        // console.log('In one go');
+        return response.json();
+      } else if (response.status == 401) {
+        // console.log('Unauth 1');
+        // careful: this could also be because of XSS prevention token
+        return this.renewToken(site).then(jwt => {
+          site.Token = jwt;
+          return this.request<T>(
+            site,
+            controller,
+            action,
+            conferenceId,
+            id,
+            qsParams,
+            params
+          );
+        });
+      } else {
+        Alert.alert("Request failed");
+        throw new Error("Request failed");
+      }
+    });
   }
 
   static getConference(
@@ -135,9 +161,62 @@ export default class Service {
       site,
       "Conferences",
       "Complete",
+      null,
       conferenceId,
+      null,
       {}
     );
   }
 
+  static getAttendances(
+    site: ISite,
+    conferenceId: number
+  ): Promise<ISessionAttendee[]> {
+    return this.request<ISessionAttendee[]>(
+      site,
+      "SessionAttendees",
+      "Attendances",
+      conferenceId,
+      null,
+      null,
+      {}
+    );
+  }
+
+  static submitEvaluation(
+    site: ISite,
+    conferenceId: number,
+    evaluation: ISessionEvaluation
+  ): Promise<string> {
+    return this.request<string>(
+      site,
+      "SessionEvaluations",
+      "Set",
+      conferenceId,
+      null,
+      null,
+      {
+        method: "POST",
+        data: evaluation
+      }
+    );
+  }
+
+  static attendSession(
+    site: ISite,
+    conferenceId: number,
+    sessionId: number
+  ): Promise<string> {
+    return this.request<string>(
+      site,
+      "SessionAttendees",
+      "Attend",
+      conferenceId,
+      sessionId,
+      null,
+      {
+        method: "POST"
+      }
+    );
+  }
 }

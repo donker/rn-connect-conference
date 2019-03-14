@@ -5,7 +5,7 @@ import { IAppState } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
 import Service from "../lib/service";
-import LoadScreen from './components/LoadScreen';
+import LoadScreen from "./components/LoadScreen";
 
 interface ILoadConfScreenProps {}
 interface IStateProps {
@@ -44,9 +44,7 @@ class LoadConfScreen extends React.Component<IProps> {
     }
   }
   public render() {
-    return (
-      <LoadScreen />
-    );
+    return <LoadScreen />;
   }
 }
 
@@ -60,5 +58,4 @@ export default connect(
     setConference
   }
 )(LoadConfScreen);
-
 
