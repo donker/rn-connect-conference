@@ -1,6 +1,16 @@
-import { ITrack, ITag, IAttendee, ISpeaker, ISession, ISponsor } from ".";
+import {
+  ITrack,
+  ITag,
+  IAttendee,
+  ISpeaker,
+  ISession,
+  ISponsor,
+  ISchedule
+} from ".";
 import { ISite, Site } from "./ISite";
-import { ISecurity } from './ISecurity';
+import { ISecurity } from "./ISecurity";
+import { ILocation } from "./ILocation";
+import { ISlot } from "./ISlot";
 
 export interface IConference {
   Site: ISite;
@@ -26,12 +36,16 @@ export interface IConference {
   NrLocations?: number;
   NrTracks?: number;
   NrSessions?: number;
+  Days: { DayNr: number; DayDate: Date }[];
+  Locations: ILocation[];
   Sessions: ISession[];
+  Slots: ISlot[];
   Speakers: ISpeaker[];
   Sponsors: ISponsor[];
   Tracks: ITrack[];
   Tags: ITag[];
   Attendees?: IAttendee[];
+  Schedule: ISchedule;
 }
 
 export class Conference implements IConference {
@@ -58,12 +72,16 @@ export class Conference implements IConference {
   NrLocations?: number;
   NrTracks?: number;
   NrSessions?: number;
+  Days: { DayNr: number; DayDate: Date }[];
+  Locations: ILocation[];
   Sessions: ISession[];
+  Slots: ISlot[];
   Speakers: ISpeaker[];
   Sponsors: ISponsor[];
   Tracks: ITrack[];
   Tags: ITag[];
   Attendees?: IAttendee[];
+  Schedule: ISchedule;
   constructor() {
     this.Site = new Site();
     this.ShouldRefresh = false;
@@ -72,7 +90,10 @@ export class Conference implements IConference {
     this.Name = "";
     this.SessionVoting = false;
     this.SubmittedSessionsPublic = false;
+    this.Days = [];
+    this.Locations = [];
     this.Sessions = [];
+    this.Slots = [];
     this.Speakers = [];
     this.Sponsors = [];
     this.Tracks = [];

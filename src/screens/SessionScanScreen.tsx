@@ -51,10 +51,12 @@ class SessionScanScreen extends Component<IProps, IState> {
     if (result.data !== this.state.lastScannedUrl) {
       this.setState({ lastScannedUrl: result.data });
       try {
-        let scannedSession: { id: number } = JSON.parse(result.data);
+        let scannedSession: { sid: number } = JSON.parse(
+          "{" + result.data + "}"
+        );
         let session: ISession = new Session();
         this.props.appState.conference.Sessions.forEach(s => {
-          if (s.SessionId == scannedSession.id) {
+          if (s.SessionId == scannedSession.sid) {
             session = s;
           }
         });
@@ -106,7 +108,7 @@ class SessionScanScreen extends Component<IProps, IState> {
               onPress={() => {
                 let s = {
                   type: "qr",
-                  data: '{"id":224}'
+                  data: '"sid":224'
                 };
                 this._handleBarCodeRead(s);
               }}

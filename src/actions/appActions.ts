@@ -1,4 +1,4 @@
-import { IAction, ActionType, IConference, IJwtToken } from "../models";
+import { IAction, ActionType, IConference, IJwtToken, Schedule } from "../models";
 import { IRootState } from "../models/state/state";
 
 export function setNetwork(value: boolean): IAction {
@@ -9,6 +9,9 @@ export function setNetwork(value: boolean): IAction {
 }
 
 export function setConference(value: IConference): IAction {
+  if (value.Schedule == undefined) {
+    value.Schedule = new Schedule(value);
+  }
   return {
     type: ActionType.SET_CONFERENCE,
     payload: value

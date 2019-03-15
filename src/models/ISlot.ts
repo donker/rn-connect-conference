@@ -1,7 +1,7 @@
 export interface ISlot {
   SlotId: number;
   ConferenceId: number;
-  Start: Date;
+  Start: string;
   DurationMins: number;
   SlotType: number;
   Title: string;
@@ -20,7 +20,7 @@ export interface ISlot {
 export class Slot implements ISlot {
   SlotId: number;
   ConferenceId: number;
-  Start: Date;
+  Start: string;
   DurationMins: number;
   SlotType: number;
   Title: string;
@@ -37,7 +37,7 @@ export class Slot implements ISlot {
     constructor() {
   this.SlotId = -1;
   this.ConferenceId = -1;
-  this.Start = new Date();
+  this.Start = "";
   this.DurationMins = -1;
   this.SlotType = -1;
   this.CreatedByUserID = -1;
