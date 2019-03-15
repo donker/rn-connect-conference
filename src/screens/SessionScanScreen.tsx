@@ -3,13 +3,7 @@ import { Dimensions, Text, View, StyleSheet } from "react-native";
 import { BarCodeScanner, Permissions } from "expo";
 import Icon from "react-native-vector-icons/Ionicons";
 import { IRootState } from "../models/state/state";
-import {
-  IAppState,
-  Conference,
-  IScannedSite,
-  ISession,
-  Session
-} from "../models";
+import { IAppState, ISession, Session, ISessionAttendee } from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import { connect } from "react-redux";
 import { setConference } from "../actions/appActions";
@@ -70,9 +64,10 @@ class SessionScanScreen extends Component<IProps, IState> {
             this.props.appState.conference.ConferenceId,
             session.SessionId
           )
-            .then(res => {
+            .then((res: ISessionAttendee) => {
               this.props.navigation.navigate("reviewSession", {
-                session: session
+                session: session,
+                attendance: res
               });
             })
             .catch(err => {

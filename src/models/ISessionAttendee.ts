@@ -8,6 +8,7 @@ export interface ISessionAttendee {
   SessionEnd?: Date;
   SessionAttendeeName: string;
   ReviewStars: number;
+  HasEvaluated: boolean;
 }
 
 export class SessionAttendee implements ISessionAttendee {
@@ -20,6 +21,7 @@ export class SessionAttendee implements ISessionAttendee {
   SessionEnd?: Date;
   SessionAttendeeName: string;
   ReviewStars: number;
+  HasEvaluated: boolean;
   constructor() {
     this.DisplayName = "";
     this.SessionAttendeeName = "";

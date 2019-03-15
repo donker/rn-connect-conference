@@ -1,26 +1,22 @@
 import * as React from "react";
 import { StyleSheet, ScrollView, SafeAreaView } from "react-native";
-import { ISession, Session, IAppState, SessionEvaluation } from "../models";
+import {
+  ISession,
+  Session,
+  IAppState,
+  SessionEvaluation,
+  ISessionAttendee,
+} from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import { material, materialColors } from "react-native-typography";
-import {
-  List,
-  ListItem,
-  Left,
-  Body,
-  Text,
-  Button,
-  Textarea,
-  Card,
-  CardItem
-} from "native-base";
+import { List, ListItem, Left, Body, Text, Button } from "native-base";
 import { Image } from "react-native-expo-image-cache";
 import PropValue from "./components/PropValue";
 import Moment from "moment";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
-import StarRating from "react-native-star-rating";
 import Service from "../lib/service";
+import ReviewEdit from "./components/ReviewEdit";
 
 interface ISessionReviewScreenProps {}
 interface IStateProps {
@@ -34,25 +30,25 @@ interface IProps
     NavigationScreenProps {}
 
 interface IState {
-  reviewText: string;
-  starCount: number;
+  session: ISession;
+  attendance: ISessionAttendee;
 }
 
 class SessionReviewScreen extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      reviewText: "",
-      starCount: 3
+      session: this.props.navigation.getParam("session", new Session()),
+      attendance: this.props.navigation.getParam("attendance", new Session())
     };
   }
 
-  onSubmitReview(sessionId: number) {
+  onSubmitReview(sessionId: number, stars: number, reviewText: string) {
     var review = new SessionEvaluation();
     review.UserId = this.props.appState.conference.Security.UserId;
     review.SessionId = sessionId;
-    review.Stars = this.state.starCount;
-    review.Review = this.state.reviewText;
+    review.Stars = stars;
+    review.Review = reviewText;
     Service.submitEvaluation(
       this.props.appState.conference.Site,
       this.props.appState.conference.ConferenceId,
@@ -63,11 +59,7 @@ class SessionReviewScreen extends React.Component<IProps, IState> {
   }
 
   render() {
-    let session: ISession = this.props.navigation.getParam(
-      "session",
-      new Session()
-    );
-    let speakers = session.SessionSpeakers.map(ss => (
+    let speakers = this.state.session.SessionSpeakers.map(ss => (
       <ListItem
         thumbnail
         key={ss.UserId}
@@ -90,65 +82,41 @@ class SessionReviewScreen extends React.Component<IProps, IState> {
         </Body>
       </ListItem>
     ));
-    let whereAndWhen = session.IsScheduled ? (
+    let whereAndWhen = this.state.session.IsScheduled ? (
       <PropValue
         prop="Where and when"
-        value={`${session.LocationName} on ${Moment(
-          session.SessionDateAndTime
-        ).format("ddd D MMM")} at ${Moment(session.SessionDateAndTime).format(
-          "HH:mm"
-        )}`}
+        value={`${this.state.session.LocationName} on ${Moment(
+          this.state.session.SessionDateAndTime
+        ).format("ddd D MMM")} at ${Moment(
+          this.state.session.SessionDateAndTime
+        ).format("HH:mm")}`}
       />
     ) : null;
+    var edit = this.state.attendance.HasEvaluated ? (
+      <Button success block bordered>
+        <Text>You already reviewed this session</Text>
+      </Button>
+    ) : (
+      <ReviewEdit
+        InitialStars={3}
+        InitialReview=""
+        onSubmit={(s, r) =>
+          this.onSubmitReview(this.state.session.SessionId, s, r)
+        }
+      />
+    );
     return (
       <ScrollView
         style={styles.container}
         contentInsetAdjustmentBehavior="automatic"
       >
         <SafeAreaView>
-          <Text style={styles.title}>{session.Title}</Text>
-          <Text style={styles.subtitle}>{session.SubTitle}</Text>
+          <Text style={styles.title}>{this.state.session.Title}</Text>
+          <Text style={styles.subtitle}>{this.state.session.SubTitle}</Text>
           <List>{speakers}</List>
           {whereAndWhen}
-          <PropValue prop="Level" value={session.Level} />
-          <Card>
-            <CardItem header>
-              <Text>Your Review</Text>
-            </CardItem>
-            <CardItem>
-              <Body>
-                <StarRating
-                  disabled={false}
-                  maxStars={5}
-                  fullStarColor="gold"
-                  rating={this.state.starCount}
-                  selectedStar={rating => this.setState({ starCount: rating })}
-                />
-                <Text style={styles.inputLabel}>Comments</Text>
-                <Textarea
-                  style={{
-                    width: "100%",
-                    borderWidth: 1,
-                    borderColor: "#999",
-                    padding: 6,
-                    borderRadius: 6,
-                    marginTop: 10,
-                    marginBottom: 10
-                  }}
-                  rowSpan={4}
-                  onChangeText={text => this.setState({ reviewText: text })}
-                  value={this.state.reviewText}
-                />
-                <Button
-                  block
-                  primary
-                  onPress={() => this.onSubmitReview(session.SessionId)}
-                >
-                  <Text>Submit</Text>
-                </Button>
-              </Body>
-            </CardItem>
-          </Card>
+          <PropValue prop="Level" value={this.state.session.Level} />
+          {edit}
         </SafeAreaView>
       </ScrollView>
     );

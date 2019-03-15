@@ -146,6 +146,11 @@ export default class Service {
             params
           );
         });
+      } else if (response.status == 406) {
+        response.text().then(body => {
+          Alert.alert(body);
+        });
+        throw new Error("Request failed");
       } else {
         Alert.alert("Request failed");
         throw new Error("Request failed");
@@ -206,8 +211,8 @@ export default class Service {
     site: ISite,
     conferenceId: number,
     sessionId: number
-  ): Promise<string> {
-    return this.request<string>(
+  ): Promise<ISessionAttendee> {
+    return this.request<ISessionAttendee>(
       site,
       "SessionAttendees",
       "Attend",
