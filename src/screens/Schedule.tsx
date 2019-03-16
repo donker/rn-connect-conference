@@ -3,7 +3,7 @@ import { NavigationScreenProps } from "react-navigation";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
-import { StyleSheet, ScrollView, Picker } from "react-native";
+import { StyleSheet, ScrollView, Picker, TouchableOpacity } from "react-native";
 import Moment from "moment";
 import {
   Tabs,
@@ -11,8 +11,6 @@ import {
   Container,
   Header,
   Body,
-  List,
-  ListItem,
   Text,
   Card,
   CardItem
@@ -44,6 +42,15 @@ class Schedule extends React.Component<IProps, IState> {
       Day: day ? day.DayNr : 1
     };
   }
+  gotoSession(sessionId?: number) {
+    console.log(sessionId);
+    this.props.navigation.navigate("session", {
+      host: this.props.appState.conference.Site.Host,
+      session: this.props.appState.conference.Sessions.find(
+        s => s.SessionId === sessionId
+      )
+    });
+  }
   public renderSchedule(day: number, location: number): JSX.Element | null {
     let daySchedule = this.props.appState.conference.Schedule.Days.find(
       d => d.key == day
@@ -54,26 +61,30 @@ class Schedule extends React.Component<IProps, IState> {
       daySchedule.value.Events.forEach(ev => {
         i++;
         if (ev.LocationId == -1 || ev.LocationId == location) {
-          console.log("type", ev.SlotType, typeof ev.SlotType);
           if (ev.SlotType == 0) {
             listElements.push(
-              <Card key={i}>
-                <CardItem header bordered>
-                  <Text>
-                    {`${Moment(ev.EventTimeFrom).format("LT")} - ${Moment(
-                      ev.EventTimeTo
-                    ).format("LT")}`}{" "}
-                    {ev.IsPlenary ? "Plenary Session" : null}
-                  </Text>
-                </CardItem>
-                <CardItem bordered>
-                  <Body>
-                    <Text style={styles.sessionTitle}>{ev.Title}</Text>
-                    <Text style={styles.sessionSubtitle}>{ev.Subtitle}</Text>
-                    <Text style={styles.speakers}>{ev.Speakers}</Text>
-                  </Body>
-                </CardItem>
-              </Card>
+              <TouchableOpacity
+                key={i}
+                onPress={() => this.gotoSession(ev.SessionId)}
+              >
+                <Card>
+                  <CardItem header bordered>
+                    <Text>
+                      {`${Moment(ev.EventTimeFrom).format("LT")} - ${Moment(
+                        ev.EventTimeTo
+                      ).format("LT")}`}{" "}
+                      {ev.IsPlenary ? "Plenary Session" : null}
+                    </Text>
+                  </CardItem>
+                  <CardItem bordered>
+                    <Body>
+                      <Text style={styles.sessionTitle}>{ev.Title}</Text>
+                      <Text style={styles.sessionSubtitle}>{ev.Subtitle}</Text>
+                      <Text style={styles.speakers}>{ev.Speakers}</Text>
+                    </Body>
+                  </CardItem>
+                </Card>
+              </TouchableOpacity>
             );
           } else {
             listElements.push(
