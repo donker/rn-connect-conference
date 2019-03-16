@@ -5,6 +5,7 @@ import Sponsors from "../screens/Sponsors";
 import SpeakersStack from "./SpeakersStack";
 import SessionsStack from "./SessionsStack";
 import ConferenceDetailsStack from './ConferenceDetailsStack';
+import ScheduleStack from './ScheduleStack';
 
 const Conference = createDrawerNavigator(
   {
@@ -40,6 +41,9 @@ const Conference = createDrawerNavigator(
         };
       }
     },
+    schedule: {
+      screen: ScheduleStack
+    }
   },
   {
     contentComponent: (props: any) => <SideBar {...props} />
