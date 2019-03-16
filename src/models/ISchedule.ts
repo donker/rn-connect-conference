@@ -11,6 +11,7 @@ export class Schedule implements ISchedule {
   addEvent(
     dayNr: number,
     locationId: number | undefined,
+    slotType: number,
     title: string,
     start: string,
     duration: number
@@ -23,7 +24,9 @@ export class Schedule implements ISchedule {
     let startTime = Moment(timeString);
     if (day) {
       day.Events.push({
+        IsPlenary: true,
         LocationId: locationId ? locationId : -1,
+        SlotType: slotType,
         EventTimeFrom: startTime.toDate(),
         EventTimeTo: startTime.add(duration, "minute").toDate(),
         Title: title
@@ -49,10 +52,14 @@ export class Schedule implements ISchedule {
         }).value;
         if (day) {
           day.Events.push({
+            SlotType: 0,
+            IsPlenary: s.IsPlenary,
             LocationId: s.LocationId ? s.LocationId : -1,
             EventTimeFrom: s.SessionDateAndTime as Date,
             EventTimeTo: s.SessionEnd as Date,
             Title: s.Title,
+            Subtitle: s.SubTitle,
+            Description: s.Description,
             SessionId: s.SessionId,
             Speakers: s.SessionSpeakers.map(s => s.DisplayName).join(", ")
           });
@@ -67,6 +74,7 @@ export class Schedule implements ISchedule {
             this.addEvent(
               s.DayNr,
               s.LocationId,
+              s.SlotType,
               s.Title,
               s.Start,
               s.DurationMins
@@ -76,6 +84,7 @@ export class Schedule implements ISchedule {
               this.addEvent(
                 d.key,
                 s.LocationId,
+                s.SlotType,
                 s.Title,
                 s.Start,
                 s.DurationMins
@@ -111,9 +120,13 @@ export class ScheduleDay implements IScheduleDay {
 }
 
 export interface IScheduleEvent {
+  SlotType: number;
+  IsPlenary: boolean;
   EventTimeFrom: Date;
   EventTimeTo: Date;
   Title: string;
+  Subtitle?: string;
+  Description?: string;
   LocationId: number;
   SessionId?: number;
   Speakers?: string;

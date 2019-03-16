@@ -13,8 +13,11 @@ import {
   Body,
   List,
   ListItem,
-  Text
+  Text,
+  Card,
+  CardItem
 } from "native-base";
+import { material, materialColors } from "react-native-typography";
 
 interface IScheduleProps {}
 interface IStateProps {
@@ -47,30 +50,50 @@ class Schedule extends React.Component<IProps, IState> {
     );
     if (daySchedule) {
       let listElements: JSX.Element[] = [];
+      let i = 0;
       daySchedule.value.Events.forEach(ev => {
+        i++;
         if (ev.LocationId == -1 || ev.LocationId == location) {
-          listElements.push(
-            <ListItem itemDivider>
-              <Text>{`${Moment(ev.EventTimeFrom).format("LT")} - ${Moment(
-                ev.EventTimeTo
-              ).format("LT")}`}</Text>
-            </ListItem>
-          );
-          listElements.push(
-            <ListItem>
-              <Body>
-                <Text>{ev.Title}</Text>
-                <Text note>{ev.Speakers}</Text>
-              </Body>
-            </ListItem>
-          );
+          console.log("type", ev.SlotType, typeof ev.SlotType);
+          if (ev.SlotType == 0) {
+            listElements.push(
+              <Card key={i}>
+                <CardItem header bordered>
+                  <Text>
+                    {`${Moment(ev.EventTimeFrom).format("LT")} - ${Moment(
+                      ev.EventTimeTo
+                    ).format("LT")}`}{" "}
+                    {ev.IsPlenary ? "Plenary Session" : null}
+                  </Text>
+                </CardItem>
+                <CardItem bordered>
+                  <Body>
+                    <Text style={styles.sessionTitle}>{ev.Title}</Text>
+                    <Text style={styles.sessionSubtitle}>{ev.Subtitle}</Text>
+                    <Text style={styles.speakers}>{ev.Speakers}</Text>
+                  </Body>
+                </CardItem>
+              </Card>
+            );
+          } else {
+            listElements.push(
+              <Card key={i}>
+                <CardItem bordered style={{ backgroundColor: "#ddd" }}>
+                  <Body>
+                    <Text>
+                      {`${Moment(ev.EventTimeFrom).format("LT")} - ${Moment(
+                        ev.EventTimeTo
+                      ).format("LT")}`}{" "}
+                      {ev.Title}
+                    </Text>
+                  </Body>
+                </CardItem>
+              </Card>
+            );
+          }
         }
       });
-      return (
-        <ScrollView>
-          <List>{listElements}</List>
-        </ScrollView>
-      );
+      return <ScrollView>{listElements}</ScrollView>;
     }
     return null;
   }
@@ -127,14 +150,16 @@ export default connect(
 )(Schedule);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
+  sessionTitle: {
+    ...material.body2Object,
+    color: materialColors.blackPrimary
   },
-  controls: {
-    flex: 1
+  sessionSubtitle: {
+    ...material.body1Object,
+    color: materialColors.blackPrimary
   },
-  tabContainer: {
-    flex: 4
+  speakers: {
+    ...material.subheadingObject,
+    color: materialColors.blackSecondary
   }
 });
