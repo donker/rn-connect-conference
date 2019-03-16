@@ -1,6 +1,7 @@
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
-import { setConference } from "../actions/appActions";
+import { bindActionCreators, Dispatch } from "redux";
+import { setConference, refreshAttendances } from "../actions/appActions";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
@@ -13,6 +14,7 @@ interface IStateProps {
 }
 interface IDispatchProps {
   setConference: typeof setConference;
+  refreshAttendances: typeof refreshAttendances;
 }
 interface IProps
   extends ILoadConfScreenProps,
@@ -35,11 +37,23 @@ class LoadConfScreen extends React.Component<IProps> {
         this.props.setConference(c);
       });
     } else if (this.props.appState.conference.ConferenceId != -1) {
+      if (this.props.appState.network) {
+        this.props.refreshAttendances(
+          this.props.appState.conference.Site,
+          this.props.appState.conference.ConferenceId
+        );
+      }
       this.props.navigation.navigate("Conference");
     }
   }
   componentWillReceiveProps(nextProps: IProps) {
     if (!nextProps.appState.conference.ShouldRefresh) {
+      if (this.props.appState.network) {
+        this.props.refreshAttendances(
+          this.props.appState.conference.Site,
+          this.props.appState.conference.ConferenceId
+        );
+      }
       this.props.navigation.navigate("Conference");
     }
   }
@@ -54,8 +68,12 @@ export default connect(
       appState: state.app
     };
   },
-  {
-    setConference
-  }
+  (dispatch: Dispatch) =>
+    bindActionCreators(
+      {
+        setConference: setConference,
+        refreshAttendances: refreshAttendances
+      },
+      dispatch
+    )
 )(LoadConfScreen);
-

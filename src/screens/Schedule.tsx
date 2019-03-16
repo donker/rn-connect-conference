@@ -44,11 +44,12 @@ class Schedule extends React.Component<IProps, IState> {
   }
   gotoSession(sessionId?: number) {
     console.log(sessionId);
-    this.props.navigation.navigate("session", {
+    this.props.navigation.navigate("schs_session", {
       host: this.props.appState.conference.Site.Host,
       session: this.props.appState.conference.Sessions.find(
         s => s.SessionId === sessionId
-      )
+      ),
+      stack: "schs_"
     });
   }
   public renderSchedule(day: number, location: number): JSX.Element | null {

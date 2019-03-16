@@ -6,7 +6,7 @@ import SessionScanScreen from "../screens/SessionScanScreen";
 import SessionReviewScreen from "../screens/SessionReviewScreen";
 
 const ConferenceDetailsStack = createStackNavigator({
-  conference: {
+  cd_conference: {
     screen: ConferenceDetails,
     navigationOptions: ({ navigation }) => {
       return {
@@ -22,8 +22,8 @@ const ConferenceDetailsStack = createStackNavigator({
       };
     }
   },
-  scanSession: { screen: SessionScanScreen },
-  reviewSession: { screen: SessionReviewScreen }
+  cd_scanSession: { screen: SessionScanScreen },
+  cd_reviewSession: { screen: SessionReviewScreen }
 });
 
 export default ConferenceDetailsStack;

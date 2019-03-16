@@ -3,10 +3,11 @@ import { createStackNavigator, NavigationScreenProps } from "react-navigation";
 import Sessions from "../screens/Sessions";
 import Icon from "react-native-vector-icons/Ionicons";
 import { View } from "react-native";
-import SessionScreen from '../screens/SessionScreen';
+import SessionScreen from "../screens/SessionScreen";
+import SessionReviewScreen from "../screens/SessionReviewScreen";
 
 const SessionsStack = createStackNavigator({
-  sessions: {
+  ss_sessions: {
     screen: Sessions,
     navigationOptions: ({ navigation }) => {
       return {
@@ -22,7 +23,7 @@ const SessionsStack = createStackNavigator({
       };
     }
   },
-  session: {
+  ss_session: {
     screen: SessionScreen,
     navigationOptions: (props: NavigationScreenProps) => {
       return {
@@ -45,6 +46,9 @@ const SessionsStack = createStackNavigator({
         )
       };
     }
+  },
+  ss_reviewSession: {
+    screen: SessionReviewScreen
   }
 });
 

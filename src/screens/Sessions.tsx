@@ -30,9 +30,10 @@ class Sessions extends React.Component<IProps> {
         <ListItem
           key={s.SessionId}
           onPress={() =>
-            this.props.navigation.navigate("session", {
+            this.props.navigation.navigate("ss_session", {
               host: conf.Site.Host,
-              session: s
+              session: s,
+              stack: "ss_"
             })
           }
         >

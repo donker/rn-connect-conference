@@ -4,9 +4,10 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { View } from "react-native";
 import SessionScreen from '../screens/SessionScreen';
 import Schedule from '../screens/Schedule';
+import SessionReviewScreen from '../screens/SessionReviewScreen';
 
 const ScheduleStack = createStackNavigator({
-  schedule: {
+  schs_schedule: {
     screen: Schedule,
     navigationOptions: ({ navigation }) => {
       return {
@@ -22,7 +23,7 @@ const ScheduleStack = createStackNavigator({
       };
     }
   },
-  session: {
+  schs_session: {
     screen: SessionScreen,
     navigationOptions: (props: NavigationScreenProps) => {
       return {
@@ -45,7 +46,8 @@ const ScheduleStack = createStackNavigator({
         )
       };
     }
-  }
+  },
+  schs_reviewSession: { screen: SessionReviewScreen }
 });
 
 export default ScheduleStack;

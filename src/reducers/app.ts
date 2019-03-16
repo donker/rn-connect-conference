@@ -23,6 +23,24 @@ export default (
       return Object.assign({}, state, {
         conference: c
       });
+    case ActionType.REFRESH_ATTENDANCES:
+      return Object.assign({}, state, {
+        attendances: action.payload
+      });
+    case ActionType.REFRESH_ATTENDANCES:
+      let found = false;
+      let newList = state.attendances.map(a => {
+        if (a.SessionId == action.payload.SessionId) {
+          found = true;
+          return action.payload;
+        } else {
+          return a;
+        }
+      });
+      if (!found) newList.push(action.payload);
+      return Object.assign({}, state, {
+        attendances: newList
+      });
     default:
       return state;
   }

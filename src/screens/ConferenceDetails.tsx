@@ -89,7 +89,7 @@ class ConferenceDetails extends React.Component<IProps> {
                 bordered
                 block
                 info
-                onPress={() => this.props.navigation.navigate("scanSession")}
+                onPress={() => this.props.navigation.navigate("cd_scanSession")}
                 disabled={!this.props.appState.network}
               >
                 <Text>Review Session</Text>

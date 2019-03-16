@@ -1,25 +1,27 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { NetInfo, ConnectionInfo, AsyncStorage } from "react-native";
+import { NetInfo, ConnectionInfo } from "react-native";
 
 import AppSwitchNavigator from "./AppSwitchNavigator";
 import { IRootState } from "../models/state/state";
 import { IAppState } from "../models";
-import { setNetwork, setConference } from "../actions/appActions";
-import { createAppContainer, NavigationScreenProps } from 'react-navigation';
+import { setNetwork } from "../actions/appActions";
+import { createAppContainer, NavigationScreenProps } from "react-navigation";
 
 const App = createAppContainer(AppSwitchNavigator);
 
-interface IAppContainerProps {
-}
+interface IAppContainerProps {}
 interface IStateProps {
   appState: IAppState;
 }
 interface IDispatchProps {
   setNetwork: typeof setNetwork;
-  setConference: typeof setConference;
 }
-interface IProps extends IAppContainerProps, IStateProps, IDispatchProps, NavigationScreenProps {}
+interface IProps
+  extends IAppContainerProps,
+    IStateProps,
+    IDispatchProps,
+    NavigationScreenProps {}
 
 export class AppContainer extends Component<IProps> {
   componentDidMount() {
@@ -42,7 +44,6 @@ export default connect(
     };
   },
   {
-    setNetwork,
-    setConference
+    setNetwork
   }
 )(AppContainer);

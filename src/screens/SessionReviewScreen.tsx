@@ -5,7 +5,7 @@ import {
   Session,
   IAppState,
   SessionEvaluation,
-  ISessionAttendee,
+  ISessionAttendee
 } from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import { material, materialColors } from "react-native-typography";
@@ -17,12 +17,15 @@ import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
 import Service from "../lib/service";
 import ReviewEdit from "./components/ReviewEdit";
+import { updateAttendance } from '../actions/appActions';
 
 interface ISessionReviewScreenProps {}
 interface IStateProps {
   appState: IAppState;
 }
-interface IDispatchProps {}
+interface IDispatchProps {
+  updateAttendance: typeof updateAttendance
+}
 interface IProps
   extends ISessionReviewScreenProps,
     IStateProps,
@@ -32,6 +35,7 @@ interface IProps
 interface IState {
   session: ISession;
   attendance: ISessionAttendee;
+  redirectToRoute?: string;
 }
 
 class SessionReviewScreen extends React.Component<IProps, IState> {
@@ -39,7 +43,11 @@ class SessionReviewScreen extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       session: this.props.navigation.getParam("session", new Session()),
-      attendance: this.props.navigation.getParam("attendance", new Session())
+      attendance: this.props.navigation.getParam("attendance", new Session()),
+      redirectToRoute: this.props.navigation.getParam(
+        "redirectToRoute",
+        undefined
+      )
     };
   }
 
@@ -54,7 +62,14 @@ class SessionReviewScreen extends React.Component<IProps, IState> {
       this.props.appState.conference.ConferenceId,
       review
     ).then(res => {
-      this.props.navigation.navigate("conference");
+      this.props.updateAttendance(Object.assign({}, this.state.attendance, {
+        HasEvaluated: true
+      }))
+      if (this.state.redirectToRoute) {
+        this.props.navigation.navigate(this.state.redirectToRoute);
+      } else {
+        this.props.navigation.goBack();
+      }
     });
   }
 
@@ -129,7 +144,9 @@ export default connect(
       appState: state.app
     };
   },
-  {}
+  {
+    updateAttendance
+  }
 )(SessionReviewScreen);
 
 const styles = StyleSheet.create({

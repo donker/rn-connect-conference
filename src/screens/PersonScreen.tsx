@@ -1,69 +1,128 @@
 import * as React from "react";
 import { StyleSheet, ScrollView, SafeAreaView, Dimensions } from "react-native";
-import { View, Text, Card, CardItem, Body, List, ListItem } from "native-base";
+import {
+  View,
+  Text,
+  Card,
+  CardItem,
+  Body,
+  List,
+  ListItem,
+  Right,
+  Icon
+} from "native-base";
 import { Image } from "react-native-expo-image-cache";
-import { ISpeaker, Speaker } from "../models";
+import { ISpeaker, Speaker, IAppState } from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import PropValue from "./components/PropValue";
 import { material, materialColors } from "react-native-typography";
+import { connect } from 'react-redux';
+import { IRootState } from '../models/state/state';
 
-const PersonScreen = (props: NavigationScreenProps) => {
-  let screenWidth = Dimensions.get("window").width;
-  let host = props.navigation.getParam("host", "");
-  let person: ISpeaker = props.navigation.getParam("person", new Speaker());
-  let sessions =
-    person.Sessions == undefined
-      ? null
-      : person.Sessions.map(s => (
-          <ListItem key={s.SessionId} thumbnail>
-            <Body>
-              <Text>{s.Title}</Text>
-              <Text note numberOfLines={1}>
-                {s.SubTitle}
-              </Text>
-            </Body>
-          </ListItem>
-        ));
-  return (
-    <ScrollView
-      style={styles.container}
-      contentInsetAdjustmentBehavior="automatic"
-    >
-      <SafeAreaView>
-        <View>
-          <Image
-            uri={`https://${host}/DnnImageHandler.ashx?mode=profilepic&w=${screenWidth}&h=${screenWidth}&userId=${
-              person.UserId
-            }`}
-            style={{ height: screenWidth }}
-            resizeMode="cover"
-          />
-        </View>
-        <Card>
-          <CardItem header>
-            <View style={{ flexDirection: "column" }}>
-              <Text>{person.DisplayName}</Text>
-              <Text style={{ color: "#666", fontWeight: "normal" }}>
-                {person.Company}
-              </Text>
-            </View>
-          </CardItem>
-          <CardItem>
-            <Body>
-              <PropValue prop="About" value={person.Biography} />
-            </Body>
-          </CardItem>
-        </Card>
-        <View style={{ padding: 10 }}>
-          <Text style={styles.sectionTitle}>Sessions</Text>
-        </View>
-        <List>{sessions}</List>
-      </SafeAreaView>
-    </ScrollView>
-  );
-};
+interface ISessionProps {}
+interface IStateProps {
+  appState: IAppState;
+}
+interface IDispatchProps {}
+interface IProps
+  extends ISessionProps,
+    IStateProps,
+    IDispatchProps,
+    NavigationScreenProps {}
 
-export default PersonScreen;
+interface IState {
+  host: string;
+  person: ISpeaker;
+}
+
+class PersonScreen extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      host: this.props.navigation.getParam("host", ""),
+      person: this.props.navigation.getParam("person", new Speaker())
+    };
+  }
+  render() {
+    let screenWidth = Dimensions.get("window").width;
+    let stack = this.props.navigation.getParam("stack", "");
+    let sessions =
+      this.state.person.Sessions == undefined
+        ? null
+        : this.state.person.Sessions.map(s => (
+            <ListItem
+              key={s.SessionId}
+              onPress={() => {
+                this.props.navigation.navigate(stack + "session", {
+                  host: this.state.host,
+                  session: this.props.appState.conference.Sessions.find(
+                    ss => ss.SessionId == s.SessionId
+                  ),
+                  stack: stack
+                });
+              }}
+            >
+              <Body>
+                <Text>{s.Title}</Text>
+                <Text note numberOfLines={1}>
+                  {s.SubTitle}
+                </Text>
+              </Body>
+              <Right>
+                <Icon name="arrow-forward" />
+              </Right>
+            </ListItem>
+          ));
+    return (
+      <ScrollView
+        style={styles.container}
+        contentInsetAdjustmentBehavior="automatic"
+      >
+        <SafeAreaView>
+          <View>
+            <Image
+              uri={`https://${
+                this.state.host
+              }/DnnImageHandler.ashx?mode=profilepic&w=${screenWidth}&h=${screenWidth}&userId=${
+                this.state.person.UserId
+              }`}
+              style={{ height: screenWidth }}
+              resizeMode="cover"
+            />
+          </View>
+          <Card>
+            <CardItem header>
+              <View style={{ flexDirection: "column" }}>
+                <Text>{this.state.person.DisplayName}</Text>
+                <Text style={{ color: "#666", fontWeight: "normal" }}>
+                  {this.state.person.Company}
+                </Text>
+              </View>
+            </CardItem>
+            <CardItem>
+              <Body>
+                <PropValue prop="About" value={this.state.person.Biography} />
+              </Body>
+            </CardItem>
+          </Card>
+          <View style={{ padding: 10 }}>
+            <Text style={styles.sectionTitle}>Sessions</Text>
+          </View>
+          <List>{sessions}</List>
+        </SafeAreaView>
+      </ScrollView>
+    );
+  }
+}
+
+export default connect(
+  (state: IRootState): IStateProps => {
+    return {
+      appState: state.app
+    };
+  },
+  {}
+)(PersonScreen);
 
 const styles = StyleSheet.create({
   container: {

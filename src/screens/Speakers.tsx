@@ -41,9 +41,10 @@ class Speakers extends React.Component<IProps> {
         key={s.UserId}
         thumbnail
         onPress={() =>
-          this.props.navigation.navigate("speaker", {
+          this.props.navigation.navigate("sps_speaker", {
             host: conf.Site.Host,
-            person: s
+            person: s,
+            stack: "sps_"
           })
         }
       >

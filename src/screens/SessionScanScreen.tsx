@@ -6,7 +6,7 @@ import { IRootState } from "../models/state/state";
 import { IAppState, ISession, Session, ISessionAttendee } from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import { connect } from "react-redux";
-import { setConference } from "../actions/appActions";
+import { updateAttendance } from "../actions/appActions";
 import Service from "../lib/service";
 
 interface ISessionScanScreenProps {}
@@ -14,7 +14,7 @@ interface IStateProps {
   appState: IAppState;
 }
 interface IDispatchProps {
-  setConference: typeof setConference;
+  updateAttendance: typeof updateAttendance;
 }
 interface IProps
   extends ISessionScanScreenProps,
@@ -67,9 +67,11 @@ class SessionScanScreen extends Component<IProps, IState> {
             session.SessionId
           )
             .then((res: ISessionAttendee) => {
+              this.props.updateAttendance(res);
               this.props.navigation.navigate("reviewSession", {
                 session: session,
-                attendance: res
+                attendance: res,
+                redirectToRoute: "cd_conference"
               });
             })
             .catch(err => {
@@ -130,7 +132,7 @@ export default connect(
     };
   },
   {
-    setConference
+    updateAttendance
   }
 )(SessionScanScreen);
 

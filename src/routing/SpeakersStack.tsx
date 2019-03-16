@@ -4,9 +4,11 @@ import Speakers from "../screens/Speakers";
 import PersonScreen from "../screens/PersonScreen";
 import Icon from "react-native-vector-icons/Ionicons";
 import { View } from "react-native";
+import SessionScreen from "../screens/SessionScreen";
+import SessionReviewScreen from "../screens/SessionReviewScreen";
 
 const SpeakersStack = createStackNavigator({
-  speakers: {
+  sps_speakers: {
     screen: Speakers,
     navigationOptions: ({ navigation }) => {
       return {
@@ -22,7 +24,7 @@ const SpeakersStack = createStackNavigator({
       };
     }
   },
-  speaker: {
+  sps_speaker: {
     screen: PersonScreen,
     navigationOptions: (props: NavigationScreenProps) => {
       return {
@@ -45,6 +47,12 @@ const SpeakersStack = createStackNavigator({
         )
       };
     }
+  },
+  sps_session: {
+    screen: SessionScreen
+  },
+  sps_reviewSession: {
+    screen: SessionReviewScreen
   }
 });
 
