@@ -66,9 +66,39 @@ class ConferenceDetails extends React.Component<IProps> {
                 <PropValue prop="Location" value={conf.Location} />
                 <PropValue prop="Description" value={conf.Description} />
                 <PropValue prop="Dates" value={dateString} />
+                <View
+                  style={{
+                    width: "100%",
+                    justifyContent: "flex-end",
+                    flexDirection: "row"
+                  }}
+                >
+                  <Button
+                    small
+                    bordered
+                    info
+                    style={{ margin: 5 }}
+                    onPress={() => this.refreshConference()}
+                    disabled={!this.props.appState.network}
+                  >
+                    <Text>Refresh</Text>
+                  </Button>
+                  <Button small bordered danger style={{ margin: 5 }}>
+                    <Text>Forget</Text>
+                  </Button>
+                </View>
               </Body>
             </CardItem>
           </Card>
+          <Button
+            block
+            info
+            onPress={() => this.props.navigation.navigate("cd_scanSession")}
+            disabled={!this.props.appState.network}
+            style={{margin: 10}}
+          >
+            <Text>Review Session</Text>
+          </Button>
           <Card>
             <CardItem
               header
@@ -83,35 +113,6 @@ class ConferenceDetails extends React.Component<IProps> {
               </Body>
             </CardItem>
           </Card>
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <Button
-                bordered
-                block
-                info
-                onPress={() => this.props.navigation.navigate("cd_scanSession")}
-                disabled={!this.props.appState.network}
-              >
-                <Text>Review Session</Text>
-              </Button>
-            </View>
-            <View style={styles.button}>
-              <Button
-                bordered
-                block
-                info
-                onPress={() => this.refreshConference()}
-                disabled={!this.props.appState.network}
-              >
-                <Text>Refresh</Text>
-              </Button>
-            </View>
-            <View style={styles.button}>
-              <Button bordered block danger>
-                <Text>Forget</Text>
-              </Button>
-            </View>
-          </View>
         </SafeAreaView>
       </ScrollView>
     );
