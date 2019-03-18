@@ -4,7 +4,9 @@ import {
   IJwtToken,
   IConference,
   ISessionAttendee,
-  ISessionEvaluation
+  ISessionEvaluation,
+  IAttendee,
+  IUserProfile
 } from "../models";
 
 export default class Service {
@@ -152,6 +154,7 @@ export default class Service {
         });
         throw new Error("Request failed");
       } else {
+        console.log(response);
         Alert.alert("Request failed");
         throw new Error("Request failed");
       }
@@ -221,6 +224,49 @@ export default class Service {
       null,
       {
         method: "POST"
+      }
+    );
+  }
+
+  static changeProfilePic(
+    site: ISite,
+    conferenceId: number,
+    userId: number,
+    base64: string
+  ): Promise<IAttendee> {
+    return this.request<IAttendee>(
+      site,
+      "Attendees",
+      "UpdateImage",
+      conferenceId,
+      userId,
+      null,
+      {
+        method: "POST",
+        data: {
+          Image: base64
+        }
+      }
+    );
+  }
+
+  static editProfile(
+    site: ISite,
+    conferenceId: number,
+    userId: number,
+    profile: IUserProfile
+  ): Promise<IUserProfile> {
+    console.log(profile);
+    return this.request<IUserProfile>(
+      site,
+      "Users",
+      "Edit",
+      conferenceId,
+      userId,
+      null,
+      {
+        method: "POST",
+        data: profile
       }
     );
   }

@@ -22,4 +22,5 @@ export * from './ITag';
 export * from './ITagVote';
 export * from './ITrack';
 export * from './IUserExtract';
+export * from './IUserProfile';
 

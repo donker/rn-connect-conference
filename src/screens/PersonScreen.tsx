@@ -9,15 +9,16 @@ import {
   List,
   ListItem,
   Right,
-  Icon
+  Icon,
+  Button
 } from "native-base";
 import { Image } from "react-native-expo-image-cache";
 import { ISpeaker, Speaker, IAppState } from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import PropValue from "./components/PropValue";
 import { material, materialColors } from "react-native-typography";
-import { connect } from 'react-redux';
-import { IRootState } from '../models/state/state';
+import { connect } from "react-redux";
+import { IRootState } from "../models/state/state";
 
 interface ISessionProps {}
 interface IStateProps {
@@ -33,6 +34,7 @@ interface IProps
 interface IState {
   host: string;
   person: ISpeaker;
+  showSessions: boolean;
 }
 
 class PersonScreen extends React.Component<IProps, IState> {
@@ -40,14 +42,19 @@ class PersonScreen extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       host: this.props.navigation.getParam("host", ""),
-      person: this.props.navigation.getParam("person", new Speaker())
+      person: this.props.navigation.getParam("person", new Speaker()),
+      showSessions: this.props.navigation.getParam("showSessions", true)
     };
   }
+  changePhoto() {}
   render() {
     let screenWidth = Dimensions.get("window").width;
     let stack = this.props.navigation.getParam("stack", "");
+    let thisIsMyProfile =
+      this.state.person.UserId ===
+      this.props.appState.conference.Security.UserId;
     let sessions =
-      this.state.person.Sessions == undefined
+      this.state.person.Sessions == undefined || !this.state.showSessions
         ? null
         : this.state.person.Sessions.map(s => (
             <ListItem
@@ -89,6 +96,11 @@ class PersonScreen extends React.Component<IProps, IState> {
               style={{ height: screenWidth }}
               resizeMode="cover"
             />
+            {thisIsMyProfile ? (
+              <Button block bordered info onPress={() => this.changePhoto()}>
+                <Text>Change Photo</Text>
+              </Button>
+            ) : null}
           </View>
           <Card>
             <CardItem header>

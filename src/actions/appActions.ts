@@ -5,7 +5,9 @@ import {
   IJwtToken,
   Schedule,
   ISite,
-  ISessionAttendee
+  ISessionAttendee,
+  IAttendee,
+  ISpeaker
 } from "../models";
 import { IRootState } from "../models/state/state";
 import Service from "../lib/service";
@@ -50,9 +52,9 @@ export function setAttendances(attendances: ISessionAttendee[]) {
 
 export function refreshAttendances(site: ISite, conferenceId: number) {
   return (dispatch: Function, getState: () => IRootState) => {
-    console.log("about to get attendances");
+    // console.log("about to get attendances");
     Service.getAttendances(site, conferenceId).then(attendances => {
-      console.log("got", attendances);
+      // console.log("got", attendances);
       dispatch(setAttendances(attendances));
     });
   };
@@ -62,5 +64,19 @@ export function updateAttendance(attendance: ISessionAttendee) {
   return {
     type: ActionType.UPDATE_ATTENDANCE,
     payload: attendance
+  };
+}
+
+export function updateAttendee(attendee: IAttendee) {
+  return {
+    type: ActionType.UPDATE_ATTENDEE,
+    payload: attendee
+  };
+}
+
+export function updateSpeaker(speaker: ISpeaker) {
+  return {
+    type: ActionType.UPDATE_SPEAKER,
+    payload: speaker
   };
 }

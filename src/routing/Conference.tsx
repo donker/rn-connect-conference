@@ -6,6 +6,7 @@ import SpeakersStack from "./SpeakersStack";
 import SessionsStack from "./SessionsStack";
 import ConferenceDetailsStack from './ConferenceDetailsStack';
 import ScheduleStack from './ScheduleStack';
+import ProfileStack from './ProfileStack';
 
 const Conference = createDrawerNavigator(
   {
@@ -43,6 +44,9 @@ const Conference = createDrawerNavigator(
     },
     schedule: {
       screen: ScheduleStack
+    },
+    profile: {
+      screen: ProfileStack
     }
   },
   {

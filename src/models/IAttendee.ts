@@ -10,12 +10,7 @@ export interface IAttendee {
   LastName: string;
   Email?: string;
   Username?: string;
-  PhotoVisibility?: number;
   PhotoFilename: string;
-  PhotoFolder: string;
-  PhotoWidth?: number;
-  PhotoHeight?: number;
-  PhotoContentType: string;
   Biography: string;
   ProfileCompany: string;
 }
@@ -32,19 +27,12 @@ export class Attendee implements IAttendee {
   LastName: string;
   Email?: string;
   Username?: string;
-  PhotoVisibility?: number;
   PhotoFilename: string;
-  PhotoFolder: string;
-  PhotoWidth?: number;
-  PhotoHeight?: number;
-  PhotoContentType: string;
   Biography: string;
   ProfileCompany: string;
   constructor() {
     this.Company = "";
     this.PhotoFilename = "";
-    this.PhotoFolder = "";
-    this.PhotoContentType = "";
     this.Biography = "";
     this.ProfileCompany = "";
     this.DisplayName = "";

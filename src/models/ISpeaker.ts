@@ -11,6 +11,7 @@ export interface ISpeaker {
   LastName: string;
   Email?: string;
   Username?: string;
+  PhotoFilename: string;
   Biography: string;
   NrSessions: number;
   Sessions: ISessionExtract[];
@@ -35,6 +36,7 @@ export class Speaker implements ISpeaker {
   LastName: string;
   Email?: string;
   Username?: string;
+  PhotoFilename: string;
   Biography: string;
   NrSessions: number;
   Sessions: ISessionExtract[];
