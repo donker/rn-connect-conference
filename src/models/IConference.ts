@@ -16,6 +16,7 @@ export interface IConference {
   Site: ISite;
   Security: ISecurity;
   IsAttending: boolean;
+  HasNotificationToken: boolean;
   Closed: boolean;
   OnGoing: boolean;
   ShouldRefresh: boolean;
@@ -52,6 +53,7 @@ export class Conference implements IConference {
   Site: ISite;
   Security: ISecurity;
   IsAttending: boolean;
+  HasNotificationToken: boolean;
   Closed: boolean;
   OnGoing: boolean;
   ShouldRefresh: boolean;

@@ -256,7 +256,6 @@ export default class Service {
     userId: number,
     profile: IUserProfile
   ): Promise<IUserProfile> {
-    console.log(profile);
     return this.request<IUserProfile>(
       site,
       "Users",
@@ -267,6 +266,28 @@ export default class Service {
       {
         method: "POST",
         data: profile
+      }
+    );
+  }
+
+  static setNotificationToken(
+    site: ISite,
+    conferenceId: number,
+    userId: number,
+    token: string
+  ): Promise<IAttendee> {
+    return this.request<IAttendee>(
+      site,
+      "Attendees",
+      "SetNotificationToken",
+      conferenceId,
+      userId,
+      null,
+      {
+        method: "POST",
+        data: {
+          Token: token
+        }
       }
     );
   }

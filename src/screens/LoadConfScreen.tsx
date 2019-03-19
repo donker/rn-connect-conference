@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
 import Service from "../lib/service";
 import LoadScreen from "./components/LoadScreen";
+import { Permissions, Notifications } from "expo";
 
 interface ILoadConfScreenProps {}
 interface IStateProps {
@@ -23,29 +24,52 @@ interface IProps
     NavigationScreenProps {}
 
 class LoadConfScreen extends React.Component<IProps> {
-  componentDidMount() {
+  registerForPushNotificationsAsync = async () => {
+    const { status: existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      return;
+    }
+    let token = await Notifications.getExpoPushTokenAsync();
+    Service.setNotificationToken(
+      this.props.appState.conference.Site,
+      this.props.appState.conference.ConferenceId,
+      this.props.appState.conference.Security.UserId,
+      token
+    );
+  };
+
+  async componentDidMount() {
     if (
       this.props.appState.conference.ShouldRefresh &&
       this.props.appState.conference.ConferenceId != -1
     ) {
-      Service.getConference(
+      let c = await Service.getConference(
         this.props.appState.conference.Site,
         this.props.appState.conference.ConferenceId
-      ).then(c => {
-        c.Site = this.props.appState.conference.Site;
-        c.ShouldRefresh = false;
-        this.props.setConference(c);
-      });
+      );
+      c.Site = this.props.appState.conference.Site;
+      c.ShouldRefresh = false;
+      this.props.setConference(c);
+      await this.registerForPushNotificationsAsync();
     } else if (this.props.appState.conference.ConferenceId != -1) {
       if (this.props.appState.network) {
         this.props.refreshAttendances(
           this.props.appState.conference.Site,
           this.props.appState.conference.ConferenceId
         );
+        await this.registerForPushNotificationsAsync();
       }
       this.props.navigation.navigate("Conference");
     }
   }
+
   componentWillReceiveProps(nextProps: IProps) {
     if (!nextProps.appState.conference.ShouldRefresh) {
       if (this.props.appState.network) {
@@ -57,6 +81,7 @@ class LoadConfScreen extends React.Component<IProps> {
       this.props.navigation.navigate("Conference");
     }
   }
+  
   public render() {
     return <LoadScreen />;
   }
