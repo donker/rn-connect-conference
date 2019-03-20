@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Connect Conference",
+    "name": "Conference",
     "slug": "connect-conference",
     "privacy": "public",
     "sdkVersion": "32.0.0",
@@ -12,9 +12,9 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/splashscreen.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#47292b"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
