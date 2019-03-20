@@ -28,18 +28,23 @@ export class Comment implements IComment {
   LastName: string;
   ConferenceName: string;
   SessionTitle: string;
-    constructor() {
-  this.CommentId = -1;
-  this.UserId = -1;
-  this.ConferenceId = -1;
-  this.SessionId = -1;
-  this.Datime = new Date();
-  this.Remarks = "";
-  this.Visibility = -1;
-  this.DisplayName = "";
-  this.FirstName = "";
-  this.LastName = "";
-  this.ConferenceName = "";
-   }
+  constructor() {
+    this.CommentId = -1;
+    this.UserId = -1;
+    this.ConferenceId = -1;
+    this.SessionId = -1;
+    this.Datime = new Date();
+    this.Remarks = "";
+    this.Visibility = -1;
+    this.DisplayName = "";
+    this.FirstName = "";
+    this.LastName = "";
+    this.ConferenceName = "";
+  }
 }
 
+export interface IPollCommentResult {
+  CheckTime: Date;
+  Comments: IComment[];
+  NewTotalComments: number;
+}

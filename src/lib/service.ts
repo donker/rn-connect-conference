@@ -8,7 +8,8 @@ import {
   IAttendee,
   IUserProfile,
   IComment,
-  IPagedList
+  IPagedList,
+  IPollCommentResult
 } from "../models";
 
 export default class Service {
@@ -217,6 +218,28 @@ export default class Service {
     );
   }
 
+  static pollComments(
+    site: ISite,
+    conferenceId: number,
+    sessionId: number,
+    visibility: number,
+    lastCheck: Date
+  ): Promise<IPollCommentResult> {
+    return this.request<IPollCommentResult>(
+      site,
+      "Comments",
+      "Poll",
+      conferenceId,
+      null,
+      {
+        sessionId: sessionId,
+        visibility: visibility,
+        lastCheck: Service.toUTCDateTimeDigits(lastCheck)
+      },
+      {}
+    );
+  }
+
   static submitEvaluation(
     site: ISite,
     conferenceId: number,
@@ -317,4 +340,31 @@ export default class Service {
       }
     );
   }
+
+  static toUTCDateTimeDigits = function(input: Date) {
+    if (typeof input === "string") {
+      input = new Date(input);
+    }
+    return (
+      input.getUTCFullYear() +
+      "-" +
+      Service.pad(input.getUTCMonth() + 1) +
+      "-" +
+      Service.pad(input.getUTCDate()) +
+      "T" +
+      Service.pad(input.getUTCHours()) +
+      ":" +
+      Service.pad(input.getUTCMinutes()) +
+      ":" +
+      Service.pad(input.getUTCSeconds()) +
+      "Z"
+    );
+  };
+
+  static pad = (number: number) => {
+    if (number < 10) {
+      return "0" + number;
+    }
+    return number.toString();
+  };
 }

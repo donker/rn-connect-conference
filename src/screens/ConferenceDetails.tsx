@@ -1,6 +1,10 @@
 import * as React from "react";
 import { NavigationScreenProps, Header } from "react-navigation";
-import { setConference, refreshConference } from "../actions/appActions";
+import {
+  setConference,
+  refreshConference,
+  clearRedirect
+} from "../actions/appActions";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
@@ -18,6 +22,7 @@ interface IStateProps {
 interface IDispatchProps {
   setConference: typeof setConference;
   refreshConference: typeof refreshConference;
+  clearRedirect: typeof clearRedirect;
 }
 interface IProps
   extends IConferenceDetailsProps,
@@ -29,6 +34,14 @@ class ConferenceDetails extends React.Component<IProps> {
   static navigationOptions = () => ({
     header: headerProps => <Header {...headerProps} />
   });
+
+  componentDidMount() {
+    if (this.props.appState.goto != "") {
+      let redir = this.props.appState.goto;
+      this.props.clearRedirect();
+      this.props.navigation.navigate(redir);
+    }
+  }
 
   private refreshConference() {
     if (this.props.appState.network) {
@@ -95,7 +108,7 @@ class ConferenceDetails extends React.Component<IProps> {
             info
             onPress={() => this.props.navigation.navigate("cd_scanSession")}
             disabled={!this.props.appState.network}
-            style={{margin: 10}}
+            style={{ margin: 10 }}
           >
             <Text>Review Session</Text>
           </Button>
@@ -127,7 +140,8 @@ export default connect(
   },
   {
     setConference,
-    refreshConference
+    refreshConference,
+    clearRedirect
   }
 )(ConferenceDetails);
 

@@ -47,6 +47,7 @@ export interface IConference {
   Tags: ITag[];
   Attendees?: IAttendee[];
   Schedule: ISchedule;
+  ConferenceLoaded: boolean;
 }
 
 export class Conference implements IConference {
@@ -84,6 +85,7 @@ export class Conference implements IConference {
   Tags: ITag[];
   Attendees?: IAttendee[];
   Schedule: ISchedule;
+  ConferenceLoaded: boolean;
   constructor() {
     this.Site = new Site();
     this.ShouldRefresh = false;
@@ -100,5 +102,6 @@ export class Conference implements IConference {
     this.Sponsors = [];
     this.Tracks = [];
     this.Tags = [];
+    this.ConferenceLoaded = false;
   }
 }

@@ -8,6 +8,8 @@ export interface IAppState {
   attendances: ISessionAttendee[];
   comments: IComment[];
   commentLastCheck: Date;
+  commentsTotal: number;
+  goto: string;
 }
 
 export const InitialAppState: IAppState = {
@@ -15,5 +17,7 @@ export const InitialAppState: IAppState = {
   conference: new Conference(),
   attendances: [],
   comments: [],
-  commentLastCheck: new Date()
+  commentLastCheck: new Date(),
+  commentsTotal: 0,
+  goto: ""
 };

@@ -4,7 +4,8 @@ import { bindActionCreators, Dispatch } from "redux";
 import {
   setConference,
   refreshAttendances,
-  addComments
+  addComments,
+  clearComments
 } from "../actions/appActions";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
@@ -22,6 +23,7 @@ interface IDispatchProps {
   setConference: typeof setConference;
   refreshAttendances: typeof refreshAttendances;
   addComments: typeof addComments;
+  clearComments: typeof clearComments;
 }
 interface IProps
   extends ILoadConfScreenProps,
@@ -43,6 +45,7 @@ class LoadConfScreen extends React.Component<IProps> {
       return;
     }
     let token = await Notifications.getExpoPushTokenAsync();
+    console.log("token", token);
     Service.setNotificationToken(
       this.props.appState.conference.Site,
       this.props.appState.conference.ConferenceId,
@@ -60,6 +63,7 @@ class LoadConfScreen extends React.Component<IProps> {
           c.Site = this.props.appState.conference.Site;
           c.ShouldRefresh = false;
           this.props.setConference(c);
+          this.props.clearComments();
           // await this.props.saveConference(c);
           await AsyncStorage.setItem("conference", JSON.stringify(c));
         }
@@ -72,10 +76,12 @@ class LoadConfScreen extends React.Component<IProps> {
           0,
           10
         );
-        this.props.addComments(comments);
-        if (!c.HasNotificationToken) {
-          await this.registerForPushNotificationsAsync();
-        }
+        this.props.addComments(comments, new Date(), comments.TotalCount);
+        await this.registerForPushNotificationsAsync();
+        // if (!c.HasNotificationToken) {
+        //   console.log("checking notification");
+        //   await this.registerForPushNotificationsAsync();
+        // }
       }
     }
   }
@@ -108,7 +114,8 @@ export default connect(
       {
         setConference: setConference,
         refreshAttendances: refreshAttendances,
-        addComments: addComments
+        addComments: addComments,
+        clearComments: clearComments
       },
       dispatch
     )

@@ -81,9 +81,28 @@ export function updateSpeaker(speaker: ISpeaker) {
   };
 }
 
-export function addComments(comments: IComment[]) {
+export function clearComments() {
+  return {
+    type: ActionType.CLEAR_COMMENTS
+  };
+}
+
+export function addComments(comments: IComment[], lastCheck: Date, totalComments: number) {
   return {
     type: ActionType.ADD_COMMENTS,
-    payload: comments
+    payload: { comments, lastCheck, totalComments }
+  };
+}
+
+export function clearRedirect() {
+  return {
+    type: ActionType.CLEAR_REDIRECT
+  };
+}
+
+export function redirectToPath(path: string) {
+  return {
+    type: ActionType.SET_REDIRECT,
+    payload: path
   };
 }

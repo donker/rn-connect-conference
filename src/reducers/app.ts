@@ -15,8 +15,13 @@ export default (
     case ActionType.SET_NETWORK:
       return Object.assign({}, state, { network: action.payload as boolean });
     case ActionType.SET_CONFERENCE:
+      var c4: IConference = action.payload;
+      c4.ConferenceLoaded =
+        c4.ConferenceId != -1 &&
+        c4.Site != undefined &&
+        c4.Site.Token != undefined;
       return Object.assign({}, state, {
-        conference: action.payload as IConference
+        conference: c4
       });
     case ActionType.REFRESH_CONFERENCE:
       let c = state.conference;
@@ -63,11 +68,15 @@ export default (
       let comments = state.comments;
       if (comments.length === 0) {
         return Object.assign({}, state, {
-          comments: action.payload,
-          commentLastCheck: new Date()
+          comments: action.payload.comments,
+          commentLastCheck: action.payload.lastCheck,
+          commentsTotal:
+            action.payload.totalComments == -1
+              ? state.commentsTotal
+              : action.payload.totalComments
         });
       } else {
-        let newCommentList: IComment[] = action.payload;
+        let newCommentList: IComment[] = action.payload.comments;
         comments.forEach(c => {
           if (
             newCommentList.find(nc => nc.CommentId === c.CommentId) == undefined
@@ -79,9 +88,28 @@ export default (
           a.CommentId > b.CommentId ? -1 : b.CommentId > a.CommentId ? 1 : 0
         );
         return Object.assign({}, state, {
-          comments: newCommentList
+          comments: newCommentList,
+          commentLastCheck: action.payload.lastCheck,
+          commentsTotal:
+            action.payload.totalComments == -1
+              ? state.commentsTotal
+              : action.payload.totalComments
         });
       }
+    case ActionType.CLEAR_COMMENTS:
+      return Object.assign({}, state, {
+        comments: [],
+        commentLastCheck: new Date(),
+        commentsTotal: 0
+      });
+    case ActionType.CLEAR_REDIRECT:
+      return Object.assign({}, state, {
+        goto: ""
+      });
+    case ActionType.SET_REDIRECT:
+      return Object.assign({}, state, {
+        goto: action.payload
+      });
     default:
       return state;
   }
