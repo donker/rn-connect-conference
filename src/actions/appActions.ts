@@ -7,10 +7,12 @@ import {
   ISite,
   ISessionAttendee,
   IAttendee,
-  ISpeaker
+  ISpeaker,
+  IComment
 } from "../models";
 import { IRootState } from "../models/state/state";
 import Service from "../lib/service";
+import { AsyncStorage } from "react-native";
 
 export function setNetwork(value: boolean): IAction {
   return {
@@ -52,9 +54,7 @@ export function setAttendances(attendances: ISessionAttendee[]) {
 
 export function refreshAttendances(site: ISite, conferenceId: number) {
   return (dispatch: Function, getState: () => IRootState) => {
-    // console.log("about to get attendances");
     Service.getAttendances(site, conferenceId).then(attendances => {
-      // console.log("got", attendances);
       dispatch(setAttendances(attendances));
     });
   };
@@ -78,5 +78,12 @@ export function updateSpeaker(speaker: ISpeaker) {
   return {
     type: ActionType.UPDATE_SPEAKER,
     payload: speaker
+  };
+}
+
+export function addComments(comments: IComment[]) {
+  return {
+    type: ActionType.ADD_COMMENTS,
+    payload: comments
   };
 }

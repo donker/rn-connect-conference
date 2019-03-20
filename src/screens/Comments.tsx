@@ -1,59 +1,60 @@
 import * as React from "react";
 import { NavigationScreenProps, createStackNavigator } from "react-navigation";
-import { IAppState } from "../models";
+import { IAppState, IComment } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
-import { StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import { StyleSheet, ScrollView, SafeAreaView, Text } from "react-native";
+import Comment from "./components/Comment";
 import Icon from "react-native-vector-icons/Ionicons";
-import Sponsor from "./components/Sponsor";
 
-interface ISponsorsComponentProps {}
+interface ICommentsProps {}
 interface IStateProps {
   appState: IAppState;
 }
 interface IDispatchProps {}
 interface IProps
-  extends ISponsorsComponentProps,
+  extends ICommentsProps,
     IStateProps,
     IDispatchProps,
     NavigationScreenProps {}
 
-class SponsorsComponent extends React.Component<IProps> {
+class CommentsComponent extends React.Component<IProps> {
   public render() {
-    let sponsors = this.props.appState.conference.Sponsors.map(sponsor => (
-      <Sponsor
-        key={sponsor.SponsorId}
-        sponsor={sponsor}
-        host={this.props.appState.conference.Site.Host}
-        conferenceId={this.props.appState.conference.ConferenceId}
-      />
-    ));
+    var comments = this.props.appState.comments.map((c: IComment) => {
+      return (
+        <Comment
+          key={c.CommentId}
+          comment={c}
+          host={this.props.appState.conference.Site.Host}
+        />
+      );
+    });
     return (
       <ScrollView
         style={styles.container}
         contentInsetAdjustmentBehavior="automatic"
       >
-        <SafeAreaView>{sponsors}</SafeAreaView>
+        <SafeAreaView>{comments}</SafeAreaView>
       </ScrollView>
     );
   }
 }
 
-const SponsorsScreen = connect(
+const CommentsScreen = connect(
   (state: IRootState): IStateProps => {
     return {
       appState: state.app
     };
   },
   {}
-)(SponsorsComponent);
+)(CommentsComponent);
 
-const Sponsors = createStackNavigator({
+const Comments = createStackNavigator({
   Conference: {
-    screen: SponsorsScreen,
+    screen: CommentsScreen,
     navigationOptions: ({ navigation }) => {
       return {
-        headerTitle: "Sponsors",
+        headerTitle: "News",
         headerLeft: (
           <Icon
             style={{ paddingLeft: 10 }}
@@ -67,7 +68,7 @@ const Sponsors = createStackNavigator({
   }
 });
 
-export default Sponsors;
+export default Comments;
 
 const styles = StyleSheet.create({
   container: {

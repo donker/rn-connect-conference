@@ -6,7 +6,9 @@ import {
   ISessionAttendee,
   ISessionEvaluation,
   IAttendee,
-  IUserProfile
+  IUserProfile,
+  IComment,
+  IPagedList
 } from "../models";
 
 export default class Service {
@@ -187,6 +189,30 @@ export default class Service {
       conferenceId,
       null,
       null,
+      {}
+    );
+  }
+
+  static getComments(
+    site: ISite,
+    conferenceId: number,
+    sessionId: number,
+    visibility: number,
+    pageIndex: number,
+    pageSize: number
+  ): Promise<IPagedList<IComment>> {
+    return this.request<IPagedList<IComment>>(
+      site,
+      "Comments",
+      "List",
+      conferenceId,
+      null,
+      {
+        sessionId: sessionId,
+        visibility: visibility,
+        pageIndex: pageIndex,
+        pageSize: pageSize
+      },
       {}
     );
   }

@@ -3,7 +3,8 @@ import {
   IAppState,
   ActionType,
   InitialAppState,
-  IConference
+  IConference,
+  IComment
 } from "../models";
 
 export default (
@@ -58,6 +59,29 @@ export default (
       return Object.assign({}, state, {
         conference: c3
       });
+    case ActionType.ADD_COMMENTS:
+      let comments = state.comments;
+      if (comments.length === 0) {
+        return Object.assign({}, state, {
+          comments: action.payload,
+          commentLastCheck: new Date()
+        });
+      } else {
+        let newCommentList: IComment[] = action.payload;
+        comments.forEach(c => {
+          if (
+            newCommentList.find(nc => nc.CommentId === c.CommentId) == undefined
+          ) {
+            newCommentList.push(c);
+          }
+        });
+        newCommentList.sort((a, b) =>
+          a.CommentId > b.CommentId ? -1 : b.CommentId > a.CommentId ? 1 : 0
+        );
+        return Object.assign({}, state, {
+          comments: newCommentList
+        });
+      }
     default:
       return state;
   }

@@ -7,40 +7,24 @@ import SessionsStack from "./SessionsStack";
 import ConferenceDetailsStack from './ConferenceDetailsStack';
 import ScheduleStack from './ScheduleStack';
 import ProfileStack from './ProfileStack';
+import Comments from '../screens/Comments';
 
 const Conference = createDrawerNavigator(
   {
     details: {
-      screen: ConferenceDetailsStack,
-      navigationOptions: () => {
-        return {
-          title: "Overview"
-        };
-      }
+      screen: ConferenceDetailsStack
     },
     sponsors: {
-      screen: Sponsors,
-      navigationOptions: () => {
-        return {
-          title: "Sponsors"
-        };
-      }
+      screen: Sponsors
+    },
+    news: {
+      screen: Comments
     },
     speakers: {
-      screen: SpeakersStack,
-      navigationOptions: () => {
-        return {
-          title: "Speakers"
-        };
-      }
+      screen: SpeakersStack
     },
     sessions: {
-      screen: SessionsStack,
-      navigationOptions: () => {
-        return {
-          title: "Sessions"
-        };
-      }
+      screen: SessionsStack
     },
     schedule: {
       screen: ScheduleStack

@@ -1,13 +1,18 @@
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
 import { bindActionCreators, Dispatch } from "redux";
-import { setConference, refreshAttendances } from "../actions/appActions";
+import {
+  setConference,
+  refreshAttendances,
+  addComments
+} from "../actions/appActions";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
 import Service from "../lib/service";
 import LoadScreen from "./components/LoadScreen";
 import { Permissions, Notifications } from "expo";
+import { AsyncStorage } from "react-native";
 
 interface ILoadConfScreenProps {}
 interface IStateProps {
@@ -16,6 +21,7 @@ interface IStateProps {
 interface IDispatchProps {
   setConference: typeof setConference;
   refreshAttendances: typeof refreshAttendances;
+  addComments: typeof addComments;
 }
 interface IProps
   extends ILoadConfScreenProps,
@@ -46,27 +52,31 @@ class LoadConfScreen extends React.Component<IProps> {
   };
 
   async componentDidMount() {
-    if (
-      this.props.appState.conference.ShouldRefresh &&
-      this.props.appState.conference.ConferenceId != -1
-    ) {
-      let c = await Service.getConference(
-        this.props.appState.conference.Site,
-        this.props.appState.conference.ConferenceId
-      );
-      c.Site = this.props.appState.conference.Site;
-      c.ShouldRefresh = false;
-      this.props.setConference(c);
-      await this.registerForPushNotificationsAsync();
-    } else if (this.props.appState.conference.ConferenceId != -1) {
+    let c = this.props.appState.conference;
+    if (c.ConferenceId != -1) {
       if (this.props.appState.network) {
-        this.props.refreshAttendances(
-          this.props.appState.conference.Site,
-          this.props.appState.conference.ConferenceId
+        if (c.ShouldRefresh) {
+          c = await Service.getConference(c.Site, c.ConferenceId);
+          c.Site = this.props.appState.conference.Site;
+          c.ShouldRefresh = false;
+          this.props.setConference(c);
+          // await this.props.saveConference(c);
+          await AsyncStorage.setItem("conference", JSON.stringify(c));
+        }
+        this.props.refreshAttendances(c.Site, c.ConferenceId);
+        let comments = await Service.getComments(
+          c.Site,
+          c.ConferenceId,
+          -1,
+          2,
+          0,
+          10
         );
-        await this.registerForPushNotificationsAsync();
+        this.props.addComments(comments);
+        if (!c.HasNotificationToken) {
+          await this.registerForPushNotificationsAsync();
+        }
       }
-      this.props.navigation.navigate("Conference");
     }
   }
 
@@ -81,7 +91,7 @@ class LoadConfScreen extends React.Component<IProps> {
       this.props.navigation.navigate("Conference");
     }
   }
-  
+
   public render() {
     return <LoadScreen />;
   }
@@ -97,7 +107,8 @@ export default connect(
     bindActionCreators(
       {
         setConference: setConference,
-        refreshAttendances: refreshAttendances
+        refreshAttendances: refreshAttendances,
+        addComments: addComments
       },
       dispatch
     )

@@ -5,6 +5,7 @@ export * from './IAttendee';
 export * from './IComment';
 export * from './IConference';
 export * from './ILocation';
+export * from './IPagedList';
 export * from './ISchedule';
 export * from './ISecurity';
 export * from './ISession';
