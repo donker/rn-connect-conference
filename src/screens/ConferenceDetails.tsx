@@ -3,7 +3,8 @@ import { NavigationScreenProps, Header } from "react-navigation";
 import {
   setConference,
   refreshConference,
-  clearRedirect
+  clearRedirect,
+  clearConference
 } from "../actions/appActions";
 import { IAppState } from "../models";
 import { connect } from "react-redux";
@@ -22,6 +23,7 @@ interface IStateProps {
 interface IDispatchProps {
   setConference: typeof setConference;
   refreshConference: typeof refreshConference;
+  clearConference: typeof clearConference;
   clearRedirect: typeof clearRedirect;
 }
 interface IProps
@@ -48,6 +50,11 @@ class ConferenceDetails extends React.Component<IProps> {
       this.props.refreshConference();
       this.props.navigation.navigate("LoadConference");
     }
+  }
+
+  private forgetConference() {
+    this.props.clearConference();
+    this.props.navigation.navigate("Switch");
   }
 
   public render() {
@@ -96,7 +103,13 @@ class ConferenceDetails extends React.Component<IProps> {
                   >
                     <Text>Refresh</Text>
                   </Button>
-                  <Button small bordered danger style={{ margin: 5 }}>
+                  <Button
+                    small
+                    bordered
+                    danger
+                    style={{ margin: 5 }}
+                    onPress={() => this.forgetConference()}
+                  >
                     <Text>Forget</Text>
                   </Button>
                 </View>
@@ -141,6 +154,7 @@ export default connect(
   {
     setConference,
     refreshConference,
+    clearConference,
     clearRedirect
   }
 )(ConferenceDetails);

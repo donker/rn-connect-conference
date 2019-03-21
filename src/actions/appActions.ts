@@ -45,6 +45,13 @@ export function refreshConference() {
   };
 }
 
+export function clearConference() {
+  AsyncStorage.setItem("conference", JSON.stringify({}));
+  return {
+    type: ActionType.CLEAR_CONFERENCE
+  };
+}
+
 export function setAttendances(attendances: ISessionAttendee[]) {
   return {
     type: ActionType.REFRESH_ATTENDANCES,
@@ -87,7 +94,11 @@ export function clearComments() {
   };
 }
 
-export function addComments(comments: IComment[], lastCheck: Date, totalComments: number) {
+export function addComments(
+  comments: IComment[],
+  lastCheck: Date,
+  totalComments: number
+) {
   return {
     type: ActionType.ADD_COMMENTS,
     payload: { comments, lastCheck, totalComments }

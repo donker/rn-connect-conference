@@ -29,6 +29,8 @@ export default (
       return Object.assign({}, state, {
         conference: c
       });
+    case ActionType.CLEAR_CONFERENCE:
+      return InitialAppState;
     case ActionType.REFRESH_ATTENDANCES:
       return Object.assign({}, state, {
         attendances: action.payload
