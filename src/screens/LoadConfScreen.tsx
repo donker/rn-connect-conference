@@ -45,7 +45,7 @@ class LoadConfScreen extends React.Component<IProps> {
       return;
     }
     let token = await Notifications.getExpoPushTokenAsync();
-    console.log("token", token);
+    // console.log("token", token);
     Service.setNotificationToken(
       this.props.appState.conference.Site,
       this.props.appState.conference.ConferenceId,

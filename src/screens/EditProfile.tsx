@@ -87,7 +87,7 @@ class EditProfile extends React.Component<IProps, IState> {
         speaker.DescriptionShort = res.ShortBiography;
         this.props.updateSpeaker(speaker);
       }
-      console.log("receiving ", res);
+      // console.log("receiving ", res);
       this.props.navigation.goBack();
     });
   }

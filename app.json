@@ -23,11 +23,11 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "org.dnn-connect.conference",
+      "bundleIdentifier": "org.dnnconnect.conference",
       "supportsTablet": true
     },
     "android": {
-      "package": "org.dnn-connect.conference"
+      "package": "org.dnnconnect.conference"
     }
   }
 }

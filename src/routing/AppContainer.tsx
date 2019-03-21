@@ -32,7 +32,7 @@ export class AppContainer extends Component<IProps> {
   _pollingTimer: any;
   private pollingTimerTime = 10000;
   private _handleNotification = (notification: Notifications.Notification) => {
-    console.log("notification", notification);
+    // console.log("notification", notification);
     if (notification.origin === "selected") {
       if (this.props.appState.conference.ConferenceLoaded) {
         this.props.navigation.navigate("news");

@@ -157,7 +157,7 @@ export default class Service {
         });
         throw new Error("Request failed");
       } else {
-        console.log(response);
+        // console.log(response);
         Alert.alert("Request failed");
         throw new Error("Request failed");
       }
