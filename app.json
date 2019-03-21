@@ -4,12 +4,10 @@
     "slug": "connect-conference",
     "privacy": "public",
     "sdkVersion": "32.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
+    "primaryColor": "#47292b",
     "icon": "./assets/images/icon.png",
     "splash": {
       "image": "./assets/images/splashscreen.png",
@@ -19,15 +17,19 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "org.dnnconnect.conference",
-      "supportsTablet": true
+      "buildNumber": "1.0.0",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses QR codes to link to the DNN Connect website."
+      }
     },
     "android": {
-      "package": "org.dnnconnect.conference"
+      "package": "org.dnnconnect.conference",
+      "versionCode": 1,
+      "permissions": ["CAMERA"]
     }
   }
 }
