@@ -5,7 +5,8 @@ import {
   ScrollView,
   SafeAreaView,
   Dimensions,
-  Image
+  Image,
+  Alert
 } from "react-native";
 import {
   View,
@@ -97,6 +98,30 @@ class MyProfile extends React.Component<IProps, IState> {
       person: this.state.person
     });
   }
+  async launchPicker(camera: boolean) {
+    var res = await Permissions.askAsync(Permissions.CAMERA);
+    if (res.status != "granted") {
+      Alert.alert("You must allow the app to use the camera");
+    }
+    res = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    if (res.status != "granted") {
+      Alert.alert("You must allow the app access to the camera roll");
+    }
+    if (camera) {
+      ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        base64: true
+      }).then(res => this.changeImage(res));
+    } else {
+      ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        base64: true
+      }).then(res => this.changeImage(res));
+    }
+  }
   public render() {
     if (!this.props.appState.conference.Attendees) {
       return null; // todo
@@ -134,11 +159,7 @@ class MyProfile extends React.Component<IProps, IState> {
               <Button
                 style={{ backgroundColor: "#EE3644" }}
                 onPress={() => {
-                  ImagePicker.launchCameraAsync({
-                    allowsEditing: true,
-                    aspect: [1, 1],
-                    base64: true
-                  }).then(res => this.changeImage(res));
+                  this.launchPicker(true);
                 }}
               >
                 <Icon name="camera" />
@@ -146,16 +167,7 @@ class MyProfile extends React.Component<IProps, IState> {
               <Button
                 style={{ backgroundColor: "#47292b" }}
                 onPress={() => {
-                  Permissions.askAsync(Permissions.CAMERA_ROLL).then(res => {
-                    if (res.status == "granted") {
-                      ImagePicker.launchImageLibraryAsync({
-                        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                        allowsEditing: true,
-                        aspect: [1, 1],
-                        base64: true
-                      }).then(res => this.changeImage(res));
-                    }
-                  });
+                  this.launchPicker(false);
                 }}
               >
                 <Icon name="images" />
