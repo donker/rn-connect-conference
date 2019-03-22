@@ -69,19 +69,24 @@ class MyProfile extends React.Component<IProps, IState> {
     if (!imgPickResult.cancelled) {
       Service.changeProfilePic(
         this.props.appState.conference.Site,
+        this.props.navigation,
         this.props.appState.conference.ConferenceId,
         (this.state.person as IAttendee).UserId as number,
         imgPickResult.base64 as string
       ).then(res => {
         CacheManager.clearCache();
         this.props.updateAttendee(res);
+      })
+      .catch(err => {
+        Alert.alert("Failed to update profile pic");
       });
+  ;
     }
   }
   componentWillReceiveProps(props: IProps) {
-    setTimeout(() => {
-      this.setState({ cnt: this.state.cnt + 1 });
-    }, 180000);
+    // setTimeout(() => {
+    //   this.setState({ cnt: this.state.cnt + 1 });
+    // }, 180000);
   }
   componentDidMount() {
     const didFocusSubscription = this.props.navigation.addListener(

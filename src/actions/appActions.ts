@@ -35,6 +35,7 @@ export function setJwtToken(jwt: IJwtToken) {
   return (dispatch: Function, getState: () => IRootState) => {
     let conf = getState().app.conference;
     conf.Site.Token = jwt;
+    AsyncStorage.setItem("conference", JSON.stringify(conf));
     dispatch(setConference(conf));
   };
 }
@@ -59,10 +60,13 @@ export function setAttendances(attendances: ISessionAttendee[]) {
   };
 }
 
-export function refreshAttendances(site: ISite, conferenceId: number) {
+export function refreshAttendances(site: ISite, navigation: any, conferenceId: number) {
   return (dispatch: Function, getState: () => IRootState) => {
-    Service.getAttendances(site, conferenceId).then(attendances => {
+    Service.getAttendances(site, navigation, conferenceId).then(attendances => {
       dispatch(setAttendances(attendances));
+    })
+    .catch(err => {
+      // do nothing
     });
   };
 }

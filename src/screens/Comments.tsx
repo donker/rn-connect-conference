@@ -3,7 +3,7 @@ import { NavigationScreenProps, createStackNavigator } from "react-navigation";
 import { IAppState, IComment } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
-import { StyleSheet, ScrollView, SafeAreaView, Text } from "react-native";
+import { StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import Comment from "./components/Comment";
 import Icon from "react-native-vector-icons/Ionicons";
 

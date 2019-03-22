@@ -44,10 +44,12 @@ export class AppContainer extends Component<IProps> {
   private _handleTimer = () => {
     if (
       this.props.appState.network &&
-      this.props.appState.conference.ConferenceLoaded
+      this.props.appState.conference.ConferenceLoaded &&
+      this.props.appState.conference.Site.Token != undefined
     ) {
       Service.pollComments(
         this.props.appState.conference.Site,
+        this.props.navigation,
         this.props.appState.conference.ConferenceId,
         -1,
         2,

@@ -63,6 +63,7 @@ class SessionScanScreen extends Component<IProps, IState> {
         if (session != null) {
           Service.attendSession(
             this.props.appState.conference.Site,
+            this.props.navigation,
             this.props.appState.conference.ConferenceId,
             session.SessionId
           )

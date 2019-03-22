@@ -65,6 +65,7 @@ class EditProfile extends React.Component<IProps, IState> {
   private save() {
     Service.editProfile(
       this.props.appState.conference.Site,
+      this.props.navigation,
       this.props.appState.conference.ConferenceId,
       this.state.UserId as number,
       { ...this.state }
@@ -89,6 +90,9 @@ class EditProfile extends React.Component<IProps, IState> {
       }
       // console.log("receiving ", res);
       this.props.navigation.goBack();
+    })
+    .catch(err => {
+      // do nothing
     });
   }
   public render() {

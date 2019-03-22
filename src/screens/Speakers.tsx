@@ -6,15 +6,12 @@ import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
 import { StyleSheet, ScrollView, SafeAreaView, Dimensions } from "react-native";
 import {
-  Container,
-  Content,
   List,
   ListItem,
   Left,
   Body,
   Text,
   Right,
-  Button,
   Icon
 } from "native-base";
 import { Image } from "react-native-expo-image-cache";

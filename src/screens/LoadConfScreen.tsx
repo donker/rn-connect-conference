@@ -48,10 +48,13 @@ class LoadConfScreen extends React.Component<IProps> {
     // console.log("token", token);
     Service.setNotificationToken(
       this.props.appState.conference.Site,
+      this.props.navigation,
       this.props.appState.conference.ConferenceId,
       this.props.appState.conference.Security.UserId,
       token
-    );
+    ).catch(err => {
+      // do nothing
+    });
   };
 
   async componentDidMount() {
@@ -59,7 +62,7 @@ class LoadConfScreen extends React.Component<IProps> {
     if (c.ConferenceId != -1) {
       if (this.props.appState.network) {
         if (c.ShouldRefresh) {
-          c = await Service.getConference(c.Site, c.ConferenceId);
+          c = await Service.getConference(c.Site, this.props.navigation, c.ConferenceId);
           c.Site = this.props.appState.conference.Site;
           c.ShouldRefresh = false;
           this.props.setConference(c);
@@ -67,9 +70,10 @@ class LoadConfScreen extends React.Component<IProps> {
           // await this.props.saveConference(c);
           await AsyncStorage.setItem("conference", JSON.stringify(c));
         }
-        this.props.refreshAttendances(c.Site, c.ConferenceId);
+        this.props.refreshAttendances(c.Site, this.props.navigation, c.ConferenceId);
         let comments = await Service.getComments(
           c.Site,
+          this.props.navigation,
           c.ConferenceId,
           -1,
           2,
@@ -91,6 +95,7 @@ class LoadConfScreen extends React.Component<IProps> {
       if (this.props.appState.network) {
         this.props.refreshAttendances(
           this.props.appState.conference.Site,
+          this.props.navigation,
           this.props.appState.conference.ConferenceId
         );
       }

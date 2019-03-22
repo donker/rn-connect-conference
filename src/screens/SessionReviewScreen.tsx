@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import { StyleSheet, ScrollView, SafeAreaView, Alert } from "react-native";
 import {
   ISession,
   Session,
@@ -59,6 +59,7 @@ class SessionReviewScreen extends React.Component<IProps, IState> {
     review.Review = reviewText;
     Service.submitEvaluation(
       this.props.appState.conference.Site,
+      this.props.navigation,
       this.props.appState.conference.ConferenceId,
       review
     ).then(res => {
@@ -70,6 +71,9 @@ class SessionReviewScreen extends React.Component<IProps, IState> {
       } else {
         this.props.navigation.goBack();
       }
+    })
+    .catch(err => {
+      Alert.alert("Couldn't submit review");
     });
   }
 

@@ -22,7 +22,7 @@ class SwitchScreen extends React.Component<IProps> {
     AsyncStorage.getItem("conference")
       .then(value => {
         if (value) {
-          console.log("data", value);
+          // console.log("data", value);
           this.props.setConference(JSON.parse(value));
         }
       })
@@ -35,6 +35,7 @@ class SwitchScreen extends React.Component<IProps> {
           if (this.props.appState.network) {
             this.props.refreshAttendances(
               this.props.appState.conference.Site,
+              this.props.navigation,
               this.props.appState.conference.ConferenceId
             );
           }

@@ -11,6 +11,11 @@ import {
   IPagedList,
   IPollCommentResult
 } from "../models";
+import {
+  NavigationScreenProp,
+  NavigationRoute,
+  NavigationParams
+} from "react-navigation";
 
 export default class Service {
   static authenticate(
@@ -39,7 +44,13 @@ export default class Service {
     });
   }
 
-  static renewToken(site: ISite): Promise<IJwtToken> {
+  static renewToken(
+    site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >
+  ): Promise<IJwtToken> {
     var url = `https://${
       site.Host
     }/DesktopModules/JwtAuth/API/mobile/extendtoken`;
@@ -54,20 +65,17 @@ export default class Service {
         "Cache-Control": "no-cache",
         Authorization: "Bearer " + site.Token.accessToken
       }
-    })
-      .then(response => {
-        if (response.status == 200) {
-          return response.json();
-        } else if (response.status == 401) {
-          throw new Error("Token expired");
-        } else {
-          throw new Error("Unexpected error");
-        }
-      })
-      .then(jwt => {
-        // updateJwt(site, jwt);
-        return JSON.parse(jwt);
-      });
+    }).then(response => {
+      if (response.status == 200) {
+        return response.json();
+      } else if (response.status == 401) {
+        // throw new Error("Token expired");
+        navigation.navigate("Login", { username: site.Username });
+        return Promise.reject("Token expired");
+      } else {
+        throw new Error("Unexpected error");
+      }
+    });
   }
 
   static getServiceUrl(
@@ -99,6 +107,10 @@ export default class Service {
 
   static request<T>(
     site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
     controller: string,
     action: string,
     conferenceId: number | null,
@@ -106,6 +118,11 @@ export default class Service {
     qsParams: any,
     params: any
   ): Promise<T> {
+    if (site.Token == undefined) {
+      navigation.navigate("Login", { username: site.Username });
+      return Promise.reject("Should log in");
+    }
+    // console.log(site.Token);
     var method = params.method || "GET";
     var qs = "";
     var body;
@@ -131,7 +148,7 @@ export default class Service {
 
     var url =
       this.getServiceUrl(site, controller, action, conferenceId, id) + qs;
-    console.log(url, { method, headers, body });
+    // console.log(url, { method, headers, body });
     return fetch(url, { method, headers, body }).then(response => {
       if (response.status == 200) {
         // console.log('In one go');
@@ -139,10 +156,11 @@ export default class Service {
       } else if (response.status == 401) {
         // console.log('Unauth 1');
         // careful: this could also be because of XSS prevention token
-        return this.renewToken(site).then(jwt => {
+        return this.renewToken(site, navigation).then(jwt => {
           site.Token = jwt;
           return this.request<T>(
             site,
+            navigation,
             controller,
             action,
             conferenceId,
@@ -150,7 +168,7 @@ export default class Service {
             qsParams,
             params
           );
-        });
+        })
       } else if (response.status == 406) {
         response.text().then(body => {
           Alert.alert(body);
@@ -166,10 +184,15 @@ export default class Service {
 
   static getConference(
     site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
     conferenceId: number
   ): Promise<IConference> {
     return this.request<IConference>(
       site,
+      navigation,
       "Conferences",
       "Complete",
       null,
@@ -181,10 +204,15 @@ export default class Service {
 
   static getAttendances(
     site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
     conferenceId: number
   ): Promise<ISessionAttendee[]> {
     return this.request<ISessionAttendee[]>(
       site,
+      navigation,
       "SessionAttendees",
       "Attendances",
       conferenceId,
@@ -196,6 +224,10 @@ export default class Service {
 
   static getComments(
     site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
     conferenceId: number,
     sessionId: number,
     visibility: number,
@@ -204,6 +236,7 @@ export default class Service {
   ): Promise<IPagedList<IComment>> {
     return this.request<IPagedList<IComment>>(
       site,
+      navigation,
       "Comments",
       "List",
       conferenceId,
@@ -220,6 +253,10 @@ export default class Service {
 
   static pollComments(
     site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
     conferenceId: number,
     sessionId: number,
     visibility: number,
@@ -227,6 +264,7 @@ export default class Service {
   ): Promise<IPollCommentResult> {
     return this.request<IPollCommentResult>(
       site,
+      navigation,
       "Comments",
       "Poll",
       conferenceId,
@@ -242,11 +280,16 @@ export default class Service {
 
   static submitEvaluation(
     site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
     conferenceId: number,
     evaluation: ISessionEvaluation
   ): Promise<string> {
     return this.request<string>(
       site,
+      navigation,
       "SessionEvaluations",
       "Set",
       conferenceId,
@@ -261,11 +304,16 @@ export default class Service {
 
   static attendSession(
     site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
     conferenceId: number,
     sessionId: number
   ): Promise<ISessionAttendee> {
     return this.request<ISessionAttendee>(
       site,
+      navigation,
       "SessionAttendees",
       "Attend",
       conferenceId,
@@ -279,12 +327,17 @@ export default class Service {
 
   static changeProfilePic(
     site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
     conferenceId: number,
     userId: number,
     base64: string
   ): Promise<IAttendee> {
     return this.request<IAttendee>(
       site,
+      navigation,
       "Attendees",
       "UpdateImage",
       conferenceId,
@@ -301,12 +354,17 @@ export default class Service {
 
   static editProfile(
     site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
     conferenceId: number,
     userId: number,
     profile: IUserProfile
   ): Promise<IUserProfile> {
     return this.request<IUserProfile>(
       site,
+      navigation,
       "Users",
       "Edit",
       conferenceId,
@@ -321,12 +379,17 @@ export default class Service {
 
   static setNotificationToken(
     site: ISite,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
     conferenceId: number,
     userId: number,
     token: string
   ): Promise<IAttendee> {
     return this.request<IAttendee>(
       site,
+      navigation,
       "Attendees",
       "SetNotificationToken",
       conferenceId,
