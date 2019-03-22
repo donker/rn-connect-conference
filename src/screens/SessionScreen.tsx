@@ -4,8 +4,7 @@ import {
   ISession,
   Session,
   IAppState,
-  ISessionAttendee,
-  SessionAttendee
+  ISessionAttendee
 } from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import { material, materialColors } from "react-native-typography";
@@ -30,20 +29,19 @@ interface IProps
 interface IState {
   host: string;
   session: ISession;
-  attendance: ISessionAttendee;
+  attendance: ISessionAttendee | undefined;
 }
 
 class SessionScreen extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     let session: ISession = props.navigation.getParam("session", new Session());
-    var attendance = props.appState.attendances.find(
-      a => a.SessionId === session.SessionId
-    );
     this.state = {
       host: props.navigation.getParam("host", ""),
       session: session,
-      attendance: attendance ? attendance : new SessionAttendee()
+      attendance: props.appState.attendances.find(
+        a => a.SessionId === session.SessionId
+      )
     };
   }
   render() {
