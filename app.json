@@ -19,7 +19,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "org.dnnconnect.conference",
-      "buildNumber": "1.0.2",
+      "buildNumber": "1.0.3",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses QR codes to link to the DNN Connect website."
@@ -27,7 +27,7 @@
     },
     "android": {
       "package": "org.dnnconnect.conference",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": ["CAMERA", "CAMERA_ROLL"]
     }
   }

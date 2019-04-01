@@ -13,7 +13,9 @@ export default (
 ): IAppState => {
   switch (action.type) {
     case ActionType.SET_NETWORK:
-      return Object.assign({}, state, { network: action.payload as boolean });
+      return Object.assign({}, state, {
+        network: action.payload as boolean
+      });
     case ActionType.SET_CONFERENCE:
       var c4: IConference = action.payload;
       c4.ConferenceLoaded =
@@ -30,7 +32,9 @@ export default (
         conference: c
       });
     case ActionType.CLEAR_CONFERENCE:
-      return InitialAppState;
+      return Object.assign({}, state, {
+        conference: undefined
+      });
     case ActionType.REFRESH_ATTENDANCES:
       return Object.assign({}, state, {
         attendances: action.payload
