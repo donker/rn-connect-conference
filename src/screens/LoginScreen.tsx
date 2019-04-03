@@ -53,7 +53,7 @@ class LoginScreen extends Component<IProps, IState> {
   }
 
   tryLogin() {
-    this.props.login(this.state.username, this.state.pwd)
+    (this.props.login(this.state.username, this.state.pwd) as any)
     .then(res => {
       this.props.navigation.navigate("LoadConference");
     })

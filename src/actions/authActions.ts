@@ -23,22 +23,18 @@ export const setTokens: (
     tokens
   };
 };
-export const saveTokens = () => (dispatch: Dispatch) => {
+export const saveTokens: (
+  tokens: IKeyedCollection<IJwtToken>
+) => Promise<void> = async tokens => {
   try {
-    var state = store.getState();
-    AsyncStorage.setItem("tokens", JSON.stringify(state.auth.tokens));
+    await AsyncStorage.setItem("tokens", JSON.stringify(tokens));
   } catch (error) {
     throw error;
   }
 };
-export const setLoginSuccess: (
-  host: string,
-  authToken: IJwtToken
-) => IAuthAction = (host, authToken) => {
+export const setLoginSuccess: () => IAuthAction = () => {
   return {
-    type: ActionType.SET_LOGIN_SUCCESS,
-    host,
-    authToken
+    type: ActionType.SET_LOGIN_SUCCESS
   };
 };
 export const setLoginError: (
@@ -49,36 +45,10 @@ export const setLoginError: (
     loginError
   };
 };
-export const setLogout: (host: string) => IAuthAction = host => {
+export const setLogout: () => IAuthAction = () => {
   return {
-    type: ActionType.SET_LOGOUT,
-    host
+    type: ActionType.SET_LOGOUT
   };
-};
-export const saveAppToken: (
-  host: string,
-  authToken: IJwtToken
-) => IAuthAction = (host, authToken) => {
-  return {
-    type: ActionType.SAVE_APP_TOKEN,
-    host,
-    authToken
-  };
-};
-export const clearAppToken: (host: string) => IAuthAction = host => {
-  AsyncStorage.removeItem("tokens");
-  return {
-    type: ActionType.CLEAR_APP_TOKEN,
-    host
-  };
-};
-
-const _saveItem = async (item: string, selectedValue: object) => {
-  try {
-    await AsyncStorage.setItem(item, JSON.stringify(selectedValue));
-  } catch (error) {
-    throw error;
-  }
 };
 
 const _getAuthService = () => {
@@ -89,10 +59,9 @@ const _getAuthService = () => {
   });
 };
 
-export const login: (username: string, password: string) => Promise<void> = (
-  username,
-  password
-) => (dispatch: Function) => {
+export const login = (username: string, password: string) => (
+  dispatch: Function
+) => {
   dispatch(setAuthPending());
   var service = _getAuthService();
   // console.log("logging in", username, password);
@@ -100,11 +69,15 @@ export const login: (username: string, password: string) => Promise<void> = (
     .login(username, password)
     .then((jwt: IJwtToken) => {
       // console.log("login response", jwt);
-      dispatch(setLoginSuccess(service.Site.Host, jwt));
-      saveTokens();
-      // _saveItem("tokens", ).catch(error => {
-      //   dispatch(asyncError(error));
-      // });
+      dispatch(setLoginSuccess());
+      var tokens = store.getState().auth.tokens;
+      if (tokens.ContainsKey(service.Site.Host)) {
+        tokens.Remove(service.Site.Host);
+      }
+      tokens.Add(service.Site.Host, jwt);
+      dispatch(setTokens(tokens));
+      saveTokens(tokens);
+      return Promise.resolve(jwt);
     })
     .catch(error => {
       // console.log("what, what?", error);
@@ -118,16 +91,15 @@ export const refreshToken = () => (dispatch: Dispatch) => {
   // console.log("refreshing");
   return service
     .refreshToken()
-    .then(response => {
+    .then(jwt => {
       // console.log("refresh response", response);
-      dispatch(saveAppToken(service.Site.Host, response));
-      _saveItem("tokens", response)
-        .then(resp => {
-          // console.log("Refresh finished");
-        })
-        .catch(error => {
-          dispatch(asyncError(error));
-        });
+      var tokens = store.getState().auth.tokens;
+      if (tokens.ContainsKey(service.Site.Host)) {
+        tokens.Remove(service.Site.Host);
+      }
+      tokens.Add(service.Site.Host, jwt);
+      dispatch(setTokens(tokens));
+      saveTokens(tokens);
     })
     .catch(error => {
       dispatch(generalError(error));
@@ -136,9 +108,14 @@ export const refreshToken = () => (dispatch: Dispatch) => {
 
 export const logout = () => async (dispatch: Dispatch) => {
   var service = _getAuthService();
-  await dispatch(setLogout(service.Site.Host));
+  dispatch(setLogout());
   try {
-    saveTokens();
+    var tokens = store.getState().auth.tokens;
+    if (tokens.ContainsKey(service.Site.Host)) {
+      tokens.Remove(service.Site.Host);
+    }
+    dispatch(setTokens(tokens));
+    saveTokens(tokens);
     // App.startApp();
   } catch (error) {
     dispatch(asyncError(error));

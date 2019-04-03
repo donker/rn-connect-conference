@@ -7,8 +7,8 @@ import {
   IAttendee,
   ISpeaker,
   IComment,
-  IKeyedCollection,
-  IJwtToken
+  IJwtToken,
+  KeyedCollection
 } from "../models";
 import { IRootState } from "../models/state/state";
 import { AsyncStorage } from "react-native";
@@ -21,21 +21,16 @@ import AppService from "../lib/appService";
 // used on app startup
 export const loadData = () => async (dispatch: Dispatch) => {
   try {
-    const authTokenString = await AsyncStorage.getItem("tokens");
-    if (authTokenString != null) {
-      const authToken: IKeyedCollection<IJwtToken> = JSON.parse(
-        authTokenString
-      );
-      dispatch(setTokens(authToken));
+    const authTokensString = await AsyncStorage.getItem("tokens");
+    if (authTokensString != null) {
+      const authTokens = new KeyedCollection<IJwtToken>(authTokensString);
+      dispatch(setTokens(authTokens));
       const conferenceValue = await AsyncStorage.getItem("conference");
       if (conferenceValue != null) {
         const conference: IConference = JSON.parse(conferenceValue);
         dispatch(setConference(conference));
-        if (authToken.ContainsKey(conference.Site.Host)) {
-          setLoginSuccess(
-            conference.Site.Host,
-            authToken.Item(conference.Site.Host)
-          );
+        if (authTokens.ContainsKey(conference.Site.Host)) {
+          setLoginSuccess();
         }
         return true;
       }
@@ -62,15 +57,6 @@ export function setConference(value: IConference): IAction {
     payload: value
   };
 }
-
-// export function setJwtToken(jwt: IJwtToken) {
-//   return (dispatch: Function, getState: () => IRootState) => {
-//     let conf = getState().app.conference;
-//     conf.Site.Token = jwt;
-//     AsyncStorage.setItem("conference", JSON.stringify(conf));
-//     dispatch(setConference(conf));
-//   };
-// }
 
 export function refreshConference() {
   return {

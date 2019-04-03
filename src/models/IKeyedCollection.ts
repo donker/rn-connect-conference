@@ -13,6 +13,16 @@ export class KeyedCollection<T> implements IKeyedCollection<T> {
 
   private count: number = 0;
 
+  constructor(serializedCollection?: string) {
+    if (serializedCollection) {
+      var deserialized: ISerializedKeyedCollection = JSON.parse(
+        serializedCollection
+      );
+      this.count = deserialized.count;
+      this.items = deserialized.items;
+    }
+  }
+
   public ContainsKey(key: string): boolean {
     return this.items.hasOwnProperty(key);
   }
@@ -61,4 +71,9 @@ export class KeyedCollection<T> implements IKeyedCollection<T> {
 
     return values;
   }
+}
+
+interface ISerializedKeyedCollection {
+  count: number;
+  items: { [index: string]: any };
 }

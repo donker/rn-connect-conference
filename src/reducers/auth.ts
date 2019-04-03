@@ -18,19 +18,11 @@ export default (
           tokens: action.tokens
         };
     case ActionType.SET_LOGIN_SUCCESS:
-      var tokens = state.tokens;
-      if (action.authToken && action.host) {
-        if (tokens.ContainsKey(action.host)) {
-          tokens.Remove(action.host);
-        }
-        tokens.Add(action.host, action.authToken);
-      }
       return {
         ...state,
         authPending: false,
         loggedIn: true,
-        loginError: null,
-        tokens: tokens
+        loginError: null
       };
     case ActionType.SET_LOGIN_ERROR:
       return {
@@ -40,14 +32,9 @@ export default (
         loginError: action.loginError
       };
     case ActionType.SET_LOGOUT:
-      var tokens = state.tokens;
-      if (action.host && tokens.ContainsKey(action.host)) {
-        tokens.Remove(action.host);
-      }
       return {
         ...state,
-        loggedIn: false,
-        tokens: tokens
+        loggedIn: false
       };
     case ActionType.INVALID_TOKEN:
       return {
@@ -66,28 +53,6 @@ export default (
         pendingRefreshingToken: null,
         tokenIsValid: true
       };
-    case ActionType.SAVE_APP_TOKEN:
-      if (action.authToken && action.host) {
-        var tokens = state.tokens;
-        if (tokens.ContainsKey(action.host)) {
-          tokens.Remove(action.host);
-        }
-        tokens.Add(action.host, action.authToken);
-        return {
-          ...state,
-          tokens: tokens
-        };
-      }
-    case ActionType.CLEAR_APP_TOKEN:
-      var tokens = state.tokens;
-      if (action.host && tokens.ContainsKey(action.host)) {
-        tokens.Remove(action.host);
-      }
-      return {
-        ...state,
-        tokens: tokens
-      };
-
     default:
       return state;
   }
