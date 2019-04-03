@@ -7,13 +7,17 @@ import { IAppState, Conference, IScannedSite } from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import { connect } from "react-redux";
 import { setConference } from "../actions/appActions";
+import { clearAppToken } from "../actions/authActions";
+import { IAuthState } from "../models/state/authState";
 
 interface IScanScreenProps {}
 interface IStateProps {
   appState: IAppState;
+  authState: IAuthState;
 }
 interface IDispatchProps {
   setConference: typeof setConference;
+  clearAppToken: typeof clearAppToken;
 }
 interface IProps
   extends IScanScreenProps,
@@ -56,11 +60,17 @@ class ScanScreen extends Component<IProps, IState> {
         conf.Site.Host = scannedSite.h;
         conf.Site.ModuleId = scannedSite.m;
         conf.Site.TabId = scannedSite.t;
+        conf.Site.ConferenceId = scannedSite.c;
         conf.Site.Username = scannedSite.u;
         conf.ConferenceId = scannedSite.c;
         conf.ShouldRefresh = true;
         this.props.setConference(conf);
-        this.props.navigation.navigate("Login", { username: scannedSite.u });
+        if (this.props.authState.tokens.ContainsKey(scannedSite.h)) {
+          // we'll assume we can use the same token
+          this.props.navigation.navigate("LoadConference");
+        } else {
+          this.props.navigation.navigate("Login", { username: scannedSite.u });
+        }
       } catch (error) {
         console.log(error);
       }
@@ -88,6 +98,23 @@ class ScanScreen extends Component<IProps, IState> {
             >
               Cancel
             </Text>
+            <Text
+              onPress={() =>
+                this._handleBarCodeRead({
+                  type: "qr",
+                  data: JSON.stringify({
+                    h: "www.dnn-connect.org",
+                    t: 287,
+                    m: 1896,
+                    c: 5,
+                    u: "peter@donker.name"
+                  })
+                })
+              }
+              style={styles.cancel}
+            >
+              Mock Scan
+            </Text>
             <Icon name="ios-qr-scanner" style={styles.qr} />
           </BarCodeScanner>
         )}
@@ -99,11 +126,13 @@ class ScanScreen extends Component<IProps, IState> {
 export default connect(
   (state: IRootState): IStateProps => {
     return {
-      appState: state.app
+      appState: state.app,
+      authState: state.auth
     };
   },
   {
-    setConference
+    setConference,
+    clearAppToken
   }
 )(ScanScreen);
 

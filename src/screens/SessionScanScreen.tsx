@@ -7,11 +7,15 @@ import { IAppState, ISession, Session, ISessionAttendee } from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import { connect } from "react-redux";
 import { updateAttendance } from "../actions/appActions";
-import Service from "../lib/service";
+import AppService from "../lib/appService";
+import { IAuthState } from "../models/state/authState";
+import { IErrorState } from "../models/state/errorState";
 
 interface ISessionScanScreenProps {}
 interface IStateProps {
   appState: IAppState;
+  authState: IAuthState;
+  errorState: IErrorState;
 }
 interface IDispatchProps {
   updateAttendance: typeof updateAttendance;
@@ -61,12 +65,12 @@ class SessionScanScreen extends Component<IProps, IState> {
           }
         });
         if (session != null) {
-          Service.attendSession(
-            this.props.appState.conference.Site,
-            this.props.navigation,
-            this.props.appState.conference.ConferenceId,
-            session.SessionId
-          )
+          var service = new AppService({
+            site: this.props.appState.conference.Site,
+            token: this.props.authState.tokens.Item(this.props.appState.conference.Site.Host)
+          });
+          service
+            .attendSession(session.SessionId)
             .then((res: ISessionAttendee) => {
               this.props.updateAttendance(res);
               this.props.navigation.navigate("reviewSession", {
@@ -129,7 +133,9 @@ class SessionScanScreen extends Component<IProps, IState> {
 export default connect(
   (state: IRootState): IStateProps => {
     return {
-      appState: state.app
+      appState: state.app,
+      authState: state.auth,
+      errorState: state.error
     };
   },
   {

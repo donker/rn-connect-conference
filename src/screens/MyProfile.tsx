@@ -20,17 +20,24 @@ import {
 } from "native-base";
 import { CacheManager } from "react-native-expo-image-cache";
 import { IAppState, IAttendee, IConference } from "../models";
-import { NavigationScreenProps } from "react-navigation";
+import {
+  NavigationScreenProps,
+  NavigationEventSubscription
+} from "react-navigation";
 import PropValue from "./components/PropValue";
 import { material, materialColors } from "react-native-typography";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
-import Service from "../lib/service";
 import { updateAttendee } from "../actions/appActions";
+import { IAuthState } from "../models/state/authState";
+import { IErrorState } from "../models/state/errorState";
+import AppService from "../lib/appService";
 
 interface IMyProfileProps {}
 interface IStateProps {
   appState: IAppState;
+  authState: IAuthState;
+  errorState: IErrorState;
 }
 interface IDispatchProps {
   updateAttendee: typeof updateAttendee;
@@ -67,20 +74,22 @@ class MyProfile extends React.Component<IProps, IState> {
   }
   changeImage(imgPickResult: ImagePicker.ImageResult): void {
     if (!imgPickResult.cancelled) {
-      Service.changeProfilePic(
-        this.props.appState.conference.Site,
-        this.props.navigation,
-        this.props.appState.conference.ConferenceId,
-        (this.state.person as IAttendee).UserId as number,
-        imgPickResult.base64 as string
-      ).then(res => {
-        CacheManager.clearCache();
-        this.props.updateAttendee(res);
-      })
-      .catch(err => {
-        Alert.alert("Failed to update profile pic");
+      var service = new AppService({
+        site: this.props.appState.conference.Site,
+        token: this.props.authState.tokens.Item(this.props.appState.conference.Site.Host)
       });
-  ;
+      service
+        .changeProfilePic(
+          (this.state.person as IAttendee).UserId as number,
+          imgPickResult.base64 as string
+        )
+        .then(res => {
+          CacheManager.clearCache();
+          this.props.updateAttendee(res);
+        })
+        .catch(err => {
+          Alert.alert("Failed to update profile pic");
+        });
     }
   }
   componentWillReceiveProps(props: IProps) {
@@ -88,8 +97,9 @@ class MyProfile extends React.Component<IProps, IState> {
     //   this.setState({ cnt: this.state.cnt + 1 });
     // }, 180000);
   }
+  didFocusSubscription: NavigationEventSubscription;
   componentDidMount() {
-    const didFocusSubscription = this.props.navigation.addListener(
+    this.didFocusSubscription = this.props.navigation.addListener(
       "didFocus",
       payload => {
         this.setState({
@@ -97,6 +107,9 @@ class MyProfile extends React.Component<IProps, IState> {
         });
       }
     );
+  }
+  componentWillUnmount() {
+    this.didFocusSubscription.remove();
   }
   edit() {
     this.props.navigation.navigate("ps_editprofile", {
@@ -206,7 +219,9 @@ class MyProfile extends React.Component<IProps, IState> {
 export default connect(
   (state: IRootState): IStateProps => {
     return {
-      appState: state.app
+      appState: state.app,
+      authState: state.auth,
+      errorState: state.error
     };
   },
   {

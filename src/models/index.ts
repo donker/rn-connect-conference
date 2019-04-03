@@ -4,6 +4,8 @@ export * from './IApiKey';
 export * from './IAttendee';
 export * from './IComment';
 export * from './IConference';
+export * from './IJwtToken';
+export * from './IKeyedCollection';
 export * from './ILocation';
 export * from './IPagedList';
 export * from './ISchedule';

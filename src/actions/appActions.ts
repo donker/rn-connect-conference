@@ -2,17 +2,49 @@ import {
   IAction,
   ActionType,
   IConference,
-  IJwtToken,
   Schedule,
-  ISite,
   ISessionAttendee,
   IAttendee,
   ISpeaker,
-  IComment
+  IComment,
+  IKeyedCollection,
+  IJwtToken
 } from "../models";
 import { IRootState } from "../models/state/state";
-import Service from "../lib/service";
 import { AsyncStorage } from "react-native";
+import { Dispatch } from "redux";
+import { setTokens, setLoginSuccess } from "./authActions";
+import { asyncError } from "./errorActions";
+import store from "../store";
+import AppService from "../lib/appService";
+
+// used on app startup
+export const loadData = () => async (dispatch: Dispatch) => {
+  try {
+    const authTokenString = await AsyncStorage.getItem("tokens");
+    if (authTokenString != null) {
+      const authToken: IKeyedCollection<IJwtToken> = JSON.parse(
+        authTokenString
+      );
+      dispatch(setTokens(authToken));
+      const conferenceValue = await AsyncStorage.getItem("conference");
+      if (conferenceValue != null) {
+        const conference: IConference = JSON.parse(conferenceValue);
+        dispatch(setConference(conference));
+        if (authToken.ContainsKey(conference.Site.Host)) {
+          setLoginSuccess(
+            conference.Site.Host,
+            authToken.Item(conference.Site.Host)
+          );
+        }
+        return true;
+      }
+    }
+  } catch (error) {
+    dispatch(asyncError(error));
+  }
+  return null;
+};
 
 export function setNetwork(value: boolean): IAction {
   return {
@@ -31,14 +63,14 @@ export function setConference(value: IConference): IAction {
   };
 }
 
-export function setJwtToken(jwt: IJwtToken) {
-  return (dispatch: Function, getState: () => IRootState) => {
-    let conf = getState().app.conference;
-    conf.Site.Token = jwt;
-    AsyncStorage.setItem("conference", JSON.stringify(conf));
-    dispatch(setConference(conf));
-  };
-}
+// export function setJwtToken(jwt: IJwtToken) {
+//   return (dispatch: Function, getState: () => IRootState) => {
+//     let conf = getState().app.conference;
+//     conf.Site.Token = jwt;
+//     AsyncStorage.setItem("conference", JSON.stringify(conf));
+//     dispatch(setConference(conf));
+//   };
+// }
 
 export function refreshConference() {
   return {
@@ -60,14 +92,21 @@ export function setAttendances(attendances: ISessionAttendee[]) {
   };
 }
 
-export function refreshAttendances(site: ISite, navigation: any, conferenceId: number) {
+export function refreshAttendances() {
   return (dispatch: Function, getState: () => IRootState) => {
-    Service.getAttendances(site, navigation, conferenceId).then(attendances => {
-      dispatch(setAttendances(attendances));
-    })
-    .catch(err => {
-      // do nothing
+    var state = store.getState();
+    var service = new AppService({
+      site: state.app.conference.Site,
+      token: state.auth.tokens.Item(state.app.conference.Site.Host)
     });
+    service
+      .getAttendances()
+      .then(attendances => {
+        dispatch(setAttendances(attendances));
+      })
+      .catch(err => {
+        // do nothing
+      });
   };
 }
 

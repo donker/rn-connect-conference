@@ -6,6 +6,7 @@ import {
   IConference,
   IComment
 } from "../models";
+import { Conference } from "../models";
 
 export default (
   state: IAppState = InitialAppState,
@@ -18,10 +19,7 @@ export default (
       });
     case ActionType.SET_CONFERENCE:
       var c4: IConference = action.payload;
-      c4.ConferenceLoaded =
-        c4.ConferenceId != -1 &&
-        c4.Site != undefined &&
-        c4.Site.Token != undefined;
+      c4.ConferenceLoaded = c4.ConferenceId != -1 && c4.Site != undefined;
       return Object.assign({}, state, {
         conference: c4
       });
@@ -33,7 +31,7 @@ export default (
       });
     case ActionType.CLEAR_CONFERENCE:
       return Object.assign({}, state, {
-        conference: undefined
+        conference: new Conference()
       });
     case ActionType.REFRESH_ATTENDANCES:
       return Object.assign({}, state, {

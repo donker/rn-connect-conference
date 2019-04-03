@@ -17,15 +17,18 @@ import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
 import { NavigationScreenProps } from "react-navigation";
 import { IAppState } from "../models";
-import Service from "../lib/service";
-import { setJwtToken } from "../actions/appActions";
+import { IAuthState } from "../models/state/authState";
+import { IErrorState } from "../models/state/errorState";
+import { login } from "../actions/authActions";
 
 interface ILoginScreenProps {}
 interface IStateProps {
   appState: IAppState;
+  authState: IAuthState;
+  errorState: IErrorState;
 }
 interface IDispatchProps {
-  setJwtToken: typeof setJwtToken;
+  login: typeof login;
 }
 interface IProps
   extends ILoginScreenProps,
@@ -49,24 +52,14 @@ class LoginScreen extends Component<IProps, IState> {
     };
   }
 
-  componentWillReceiveProps(nextProps: IProps) {
-    if (nextProps.appState.conference.Site.Token != undefined) {
-      this.props.navigation.navigate("LoadConference");
-    }
-  }
-
   tryLogin() {
-    Service.authenticate(
-      this.props.appState.conference.Site.Host,
-      this.state.username,
-      this.state.pwd
-    )
-      .then(jwt => this.props.setJwtToken(jwt))
-      .catch((err: Error) =>
-        this.setState({
-          errorString: err.message
-        })
-      );
+    this.props.login(this.state.username, this.state.pwd)
+    .then(res => {
+      this.props.navigation.navigate("LoadConference");
+    })
+    .catch(error => {
+      console.log("failed to log in", error);
+    });
   }
 
   render() {
@@ -115,13 +108,15 @@ class LoginScreen extends Component<IProps, IState> {
 export default connect(
   (state: IRootState): IStateProps => {
     return {
-      appState: state.app
+      appState: state.app,
+      authState: state.auth,
+      errorState: state.error
     };
   },
   (dispatch: Dispatch) =>
     bindActionCreators(
       {
-        setJwtToken: setJwtToken
+        login
       },
       dispatch
     )

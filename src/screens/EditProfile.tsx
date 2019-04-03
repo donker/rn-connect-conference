@@ -3,12 +3,7 @@ import { NavigationScreenProps } from "react-navigation";
 import { IAppState, Attendee, IAttendee } from "../models";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
-import {
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-  View
-} from "react-native";
+import { StyleSheet, ScrollView, SafeAreaView, View } from "react-native";
 import {
   Input,
   Form,
@@ -19,12 +14,16 @@ import {
   Textarea
 } from "native-base";
 import { material, materialColors } from "react-native-typography";
-import Service from "../lib/service";
 import { updateAttendee, updateSpeaker } from "../actions/appActions";
+import { IAuthState } from "../models/state/authState";
+import { IErrorState } from "../models/state/errorState";
+import AppService from "../lib/appService";
 
 interface IEditProfileProps {}
 interface IStateProps {
   appState: IAppState;
+  authState: IAuthState;
+  errorState: IErrorState;
 }
 interface IDispatchProps {
   updateAttendee: typeof updateAttendee;
@@ -63,37 +62,37 @@ class EditProfile extends React.Component<IProps, IState> {
     };
   }
   private save() {
-    Service.editProfile(
-      this.props.appState.conference.Site,
-      this.props.navigation,
-      this.props.appState.conference.ConferenceId,
-      this.state.UserId as number,
-      { ...this.state }
-    ).then(res => {
-      let attendee = this.props.appState.conference.Attendees
-        ? this.props.appState.conference.Attendees.find(
-            a => a.UserId == this.state.UserId
-          )
-        : undefined;
-      if (attendee) {
-        attendee = Object.assign({}, attendee, res);
-        this.props.updateAttendee(attendee);
-      }
-      let speaker = this.props.appState.conference.Speakers.find(
-        s => s.UserId == this.state.UserId
-      );
-      if (speaker) {
-        speaker = Object.assign({}, speaker, res);
-        speaker.Description = res.Biography;
-        speaker.DescriptionShort = res.ShortBiography;
-        this.props.updateSpeaker(speaker);
-      }
-      // console.log("receiving ", res);
-      this.props.navigation.goBack();
-    })
-    .catch(err => {
-      // do nothing
+    var service = new AppService({
+      site: this.props.appState.conference.Site,
+      token: this.props.authState.tokens.Item(this.props.appState.conference.Site.Host)
     });
+    service
+      .editProfile(this.state.UserId as number, { ...this.state })
+      .then(res => {
+        let attendee = this.props.appState.conference.Attendees
+          ? this.props.appState.conference.Attendees.find(
+              a => a.UserId == this.state.UserId
+            )
+          : undefined;
+        if (attendee) {
+          attendee = Object.assign({}, attendee, res);
+          this.props.updateAttendee(attendee);
+        }
+        let speaker = this.props.appState.conference.Speakers.find(
+          s => s.UserId == this.state.UserId
+        );
+        if (speaker) {
+          speaker = Object.assign({}, speaker, res);
+          speaker.Description = res.Biography;
+          speaker.DescriptionShort = res.ShortBiography;
+          this.props.updateSpeaker(speaker);
+        }
+        // console.log("receiving ", res);
+        this.props.navigation.goBack();
+      })
+      .catch(err => {
+        // do nothing
+      });
   }
   public render() {
     var shortBio = this.state.isSpeaker ? (
@@ -198,7 +197,9 @@ class EditProfile extends React.Component<IProps, IState> {
 export default connect(
   (state: IRootState): IStateProps => {
     return {
-      appState: state.app
+      appState: state.app,
+      authState: state.auth,
+      errorState: state.error
     };
   },
   {

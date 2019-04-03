@@ -15,16 +15,20 @@ import PropValue from "./components/PropValue";
 import Moment from "moment";
 import { connect } from "react-redux";
 import { IRootState } from "../models/state/state";
-import Service from "../lib/service";
 import ReviewEdit from "./components/ReviewEdit";
-import { updateAttendance } from '../actions/appActions';
+import { updateAttendance } from "../actions/appActions";
+import { IAuthState } from "../models/state/authState";
+import { IErrorState } from "../models/state/errorState";
+import AppService from "../lib/appService";
 
 interface ISessionReviewScreenProps {}
 interface IStateProps {
   appState: IAppState;
+  authState: IAuthState;
+  errorState: IErrorState;
 }
 interface IDispatchProps {
-  updateAttendance: typeof updateAttendance
+  updateAttendance: typeof updateAttendance;
 }
 interface IProps
   extends ISessionReviewScreenProps,
@@ -57,24 +61,27 @@ class SessionReviewScreen extends React.Component<IProps, IState> {
     review.SessionId = sessionId;
     review.Stars = stars;
     review.Review = reviewText;
-    Service.submitEvaluation(
-      this.props.appState.conference.Site,
-      this.props.navigation,
-      this.props.appState.conference.ConferenceId,
-      review
-    ).then(res => {
-      this.props.updateAttendance(Object.assign({}, this.state.attendance, {
-        HasEvaluated: true
-      }))
-      if (this.state.redirectToRoute) {
-        this.props.navigation.navigate(this.state.redirectToRoute);
-      } else {
-        this.props.navigation.goBack();
-      }
-    })
-    .catch(err => {
-      Alert.alert("Couldn't submit review");
+    var service = new AppService({
+      site: this.props.appState.conference.Site,
+      token: this.props.authState.tokens.Item(this.props.appState.conference.Site.Host)
     });
+    service
+      .submitEvaluation(review)
+      .then(res => {
+        this.props.updateAttendance(
+          Object.assign({}, this.state.attendance, {
+            HasEvaluated: true
+          })
+        );
+        if (this.state.redirectToRoute) {
+          this.props.navigation.navigate(this.state.redirectToRoute);
+        } else {
+          this.props.navigation.goBack();
+        }
+      })
+      .catch(err => {
+        Alert.alert("Couldn't submit review");
+      });
   }
 
   render() {
@@ -145,7 +152,9 @@ class SessionReviewScreen extends React.Component<IProps, IState> {
 export default connect(
   (state: IRootState): IStateProps => {
     return {
-      appState: state.app
+      appState: state.app,
+      authState: state.auth,
+      errorState: state.error
     };
   },
   {
