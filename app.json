@@ -5,7 +5,7 @@
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.0",
+    "version": "1.0.4",
     "orientation": "portrait",
     "primaryColor": "#47292b",
     "icon": "./assets/images/icon.png",
@@ -19,7 +19,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "org.dnnconnect.conference",
-      "buildNumber": "1.0.3",
+      "buildNumber": "1.0.4",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses QR codes to link to the DNN Connect website."
@@ -27,8 +27,15 @@
     },
     "android": {
       "package": "org.dnnconnect.conference",
-      "versionCode": 3,
-      "permissions": ["CAMERA", "CAMERA_ROLL"]
+      "versionCode": 4,
+      "permissions": ["CAMERA", "CAMERA_ROLL"],
+      "splash": {
+        "mdpi": "./assets/images/splashscreen.png",
+        "hdpi": "./assets/images/splashscreen.png",
+        "xhdpi": "./assets/images/splashscreen.png",
+        "xxhdpi": "./assets/images/splashscreen.png",
+        "xxxhdpi": "./assets/images/splashscreen.png"
+      }
     }
   }
 }

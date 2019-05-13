@@ -98,23 +98,6 @@ class ScanScreen extends Component<IProps, IState> {
             >
               Cancel
             </Text>
-            <Text
-              onPress={() =>
-                this._handleBarCodeRead({
-                  type: "qr",
-                  data: JSON.stringify({
-                    h: "www.dnn-connect.org",
-                    t: 287,
-                    m: 1896,
-                    c: 5,
-                    u: "peter@donker.name"
-                  })
-                })
-              }
-              style={styles.cancel}
-            >
-              Mock Scan
-            </Text>
             <Icon name="ios-qr-scanner" style={styles.qr} />
           </BarCodeScanner>
         )}
