@@ -101,6 +101,7 @@ export class Schedule implements ISchedule {
           : 1;
       });
     });
+    this.Days = this.Days.filter(d => d.value.Events.length > 0);
   }
 }
 

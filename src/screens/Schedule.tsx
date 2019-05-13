@@ -35,11 +35,14 @@ interface IState {
 class Schedule extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-    var day = props.appState.conference.Days.find(
-      d => Moment().diff(d.DayDate, "days") == 0
+    var day = props.appState.conference.Schedule.Days.find(
+      d => Moment().diff(d.value.DayDate, "days") == 0
     );
+    if (!day && props.appState.conference.Schedule.Days.length > 0) {
+      day = props.appState.conference.Schedule.Days[0];
+    } 
     this.state = {
-      Day: day ? day.DayNr : 1
+      Day: day ? day.value.DayNr : 1
     };
   }
   gotoSession(sessionId?: number) {
@@ -109,11 +112,12 @@ class Schedule extends React.Component<IProps, IState> {
     return null;
   }
   public render() {
-    var days = this.props.appState.conference.Days.map(d => (
+    var days = this.props.appState.conference.Schedule.Days
+    .map(d => (
       <Picker.Item
-        key={d.DayNr}
-        label={Moment(d.DayDate).format("l")}
-        value={d.DayNr}
+        key={d.value.DayNr}
+        label={Moment(d.value.DayDate).format("dddd D MMMM")}
+        value={d.value.DayNr}
       />
     ));
     var locations = this.props.appState.conference.Locations.map(l => (
@@ -134,7 +138,8 @@ class Schedule extends React.Component<IProps, IState> {
               selectedValue={this.state.Day}
               style={{
                 height: 90,
-                width: "100%"
+                width: "100%",
+                color: "#FFF",
               }}
               itemStyle={{ height: 50 }}
               onValueChange={(itemValue, itemIndex) =>
