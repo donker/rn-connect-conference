@@ -20,6 +20,7 @@ import { IAppState } from "../models";
 import { IAuthState } from "../models/state/authState";
 import { IErrorState } from "../models/state/errorState";
 import { login } from "../actions/authActions";
+import local from "../../local.json";
 
 interface ILoginScreenProps {}
 interface IStateProps {
@@ -47,7 +48,7 @@ class LoginScreen extends Component<IProps, IState> {
     super(props);
     this.state = {
       username: props.navigation.getParam("username", ""),
-      pwd: "",
+      pwd: local ? local.password : "",
       errorString: ""
     };
   }
@@ -58,7 +59,10 @@ class LoginScreen extends Component<IProps, IState> {
       this.props.navigation.navigate("LoadConference");
     })
     .catch(error => {
-      console.log("failed to log in", error);
+      this.setState({
+        errorString: "failed to log in"
+      });
+      // console.log("failed to log in", error);
     });
   }
 

@@ -15,7 +15,6 @@ import Moment from "moment";
 import { Image } from "react-native-expo-image-cache";
 import PropValue from "./components/PropValue";
 import SponsorListPropValue from "./components/SponsorListPropValue";
-import { clearAppToken } from '../actions/authActions';
 
 interface IConferenceDetailsProps {}
 interface IStateProps {
@@ -26,7 +25,6 @@ interface IDispatchProps {
   refreshConference: typeof refreshConference;
   clearConference: typeof clearConference;
   clearRedirect: typeof clearRedirect;
-  clearAppToken: typeof clearAppToken;
 }
 interface IProps
   extends IConferenceDetailsProps,
@@ -56,7 +54,6 @@ class ConferenceDetails extends React.Component<IProps> {
 
   private forgetConference() {
     this.props.clearConference();
-    // this.props.clearAppToken();
     this.props.navigation.navigate("Switch");
   }
 
@@ -158,7 +155,6 @@ export default connect(
     setConference,
     refreshConference,
     clearConference,
-    clearAppToken,
     clearRedirect
   }
 )(ConferenceDetails);

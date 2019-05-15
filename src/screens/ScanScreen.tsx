@@ -7,8 +7,8 @@ import { IAppState, Conference, IScannedSite } from "../models";
 import { NavigationScreenProps } from "react-navigation";
 import { connect } from "react-redux";
 import { setConference } from "../actions/appActions";
-import { clearAppToken } from "../actions/authActions";
 import { IAuthState } from "../models/state/authState";
+import local from "../../local.json";
 
 interface IScanScreenProps {}
 interface IStateProps {
@@ -17,7 +17,6 @@ interface IStateProps {
 }
 interface IDispatchProps {
   setConference: typeof setConference;
-  clearAppToken: typeof clearAppToken;
 }
 interface IProps
   extends IScanScreenProps,
@@ -40,6 +39,12 @@ class ScanScreen extends Component<IProps, IState> {
   }
 
   componentDidMount() {
+    if (local && local.conference.h !== "") {
+      this._handleBarCodeRead({
+        type: "manual",
+        data: JSON.stringify(local.conference)
+      });
+    }
     this._requestCameraPermission();
   }
 
@@ -65,14 +70,9 @@ class ScanScreen extends Component<IProps, IState> {
         conf.ConferenceId = scannedSite.c;
         conf.ShouldRefresh = true;
         this.props.setConference(conf);
-        if (this.props.authState.tokens.ContainsKey(scannedSite.h)) {
-          // we'll assume we can use the same token
-          this.props.navigation.navigate("LoadConference");
-        } else {
-          this.props.navigation.navigate("Login", { username: scannedSite.u });
-        }
+        this.props.navigation.navigate("Login", { username: scannedSite.u });
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     }
   };
@@ -114,8 +114,7 @@ export default connect(
     };
   },
   {
-    setConference,
-    clearAppToken
+    setConference
   }
 )(ScanScreen);
 
