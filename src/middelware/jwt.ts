@@ -45,6 +45,7 @@ export const jwt: Middleware<{}, IRootState> = (store: MiddlewareAPI) => (next: 
 	} else if (action.type === ActionType.REFRESH_EXPIRED) {
 		buffer = [];
 		// store.dispatch(logout());
+		alert("Refresh Expired");
 	} else {
 		if (buffer.length > 20) {
 			//remove all items but keep the last 20 which forms the buffer
