@@ -48,7 +48,7 @@ class LoginScreen extends Component<IProps, IState> {
     super(props);
     this.state = {
       username: props.navigation.getParam("username", ""),
-      pwd: local ? local.password : "",
+      pwd: local && local.password ? local.password : "",
       errorString: ""
     };
   }

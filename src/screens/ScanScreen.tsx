@@ -39,7 +39,7 @@ class ScanScreen extends Component<IProps, IState> {
   }
 
   componentDidMount() {
-    if (local && local.conference.h !== "") {
+    if (local && local.conference) {
       this._handleBarCodeRead({
         type: "manual",
         data: JSON.stringify(local.conference)
