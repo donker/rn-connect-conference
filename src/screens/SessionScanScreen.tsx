@@ -73,7 +73,7 @@ class SessionScanScreen extends Component<IProps, IState> {
             .attendSession(session.SessionId)
             .then((res: ISessionAttendee) => {
               this.props.updateAttendance(res);
-              this.props.navigation.navigate("reviewSession", {
+              this.props.navigation.navigate("cd_reviewSession", {
                 session: session,
                 attendance: res,
                 redirectToRoute: "cd_conference"
@@ -109,18 +109,6 @@ class SessionScanScreen extends Component<IProps, IState> {
               style={styles.cancel}
             >
               Cancel
-            </Text>
-            <Text
-              style={styles.cancel}
-              onPress={() => {
-                let s = {
-                  type: "qr",
-                  data: '"sid":224'
-                };
-                this._handleBarCodeRead(s);
-              }}
-            >
-              Mock Scan
             </Text>
             <Icon name="ios-qr-scanner" style={styles.qr} />
           </BarCodeScanner>
